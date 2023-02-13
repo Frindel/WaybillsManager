@@ -9,9 +9,8 @@
 
   <ItemGroup>
     <Folder Include="Model\Data\Entitys\" />
+    <Folder Include="Model\ActionHandler\" />
     <Folder Include="ViewModel\" />
-    <Folder Include="View\Form\" />
-    <Folder Include="Theme\" />
   </ItemGroup>
 
 </Project>
