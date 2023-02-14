@@ -24,8 +24,6 @@ namespace WaybillsManager.View
 
 		public void DisplayForm(FormBase form)
 		{
-			//todo: добавление формы в список открытых форм и ее отображение
-
 			// получение названия типа формы
 			string formType = form.GetType().GetCustomAttribute<FormTypeAttribute>()?.FormTypeName ?? string.Empty;
 

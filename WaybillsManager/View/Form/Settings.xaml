@@ -1,0 +1,82 @@
+﻿<form:FormBase x:Class="WaybillsManager.View.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WaybillsManager.View"
+        mc:Ignorable="d"
+		xmlns:form="clr-namespace:WaybillsManager.View.Form"
+        Title="Настройки" Height="580" Width="400" ResizeMode="NoResize">
+    <Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition Height="auto"/>
+		</Grid.RowDefinitions>
+		<StackPanel Grid.Row="0">
+			<GroupBox>
+				<GroupBox.Header>Шаблоны вывода Word</GroupBox.Header>
+				<StackPanel>
+					<ListBox x:Name="wordTemplates" Height="120" ItemsSource="{Binding WordTemplates}">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding URL}"/>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+					<WrapPanel>
+						<Button Command="{Binding AddWordTemplate}">Добавить</Button>
+						<Button Command="{Binding RemoveWordTeemplate}" CommandParameter="{Binding ElementName=wordTemplates, Path=SelectedItem}">Удалить</Button>
+					</WrapPanel>
+					<WrapPanel>
+						<Label>Шаблон по умолчанию: </Label>
+						<ComboBox Width="150" ItemsSource="{Binding WordTemplates}" SelectedValue="{Binding DefaultWordTemplate}">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding FileName}"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+					</WrapPanel>
+				</StackPanel>
+			</GroupBox>
+			<GroupBox>
+				<GroupBox.Header>Шаблоны вывода Excel</GroupBox.Header>
+				<StackPanel>
+					<ListBox x:Name="excelTemplates"  Height="120" ItemsSource="{Binding ExcelTemplates}">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding URL}"/>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+					<WrapPanel>
+						<Button Command="{Binding AddExcelTemplate}">Добавить</Button>
+						<Button Command="{Binding RemoveExcelTeemplate}" CommandParameter="{Binding ElementName=excelTemplates, Path=SelectedItem}">Удалить</Button>
+					</WrapPanel>
+					<WrapPanel>
+						<Label>Шаблон по умолчанию:</Label>
+						<ComboBox Width="150">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding FileName}"/>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+					</WrapPanel>
+				</StackPanel>
+			</GroupBox>
+			<GroupBox>
+				<GroupBox.Header>База данных</GroupBox.Header>
+				<WrapPanel>
+					<Label>Путь</Label>
+					<TextBox Width="220" Text="{Binding DbConnection}"/>
+					<Button Command="{Binding SetDbConnection}">Обзор...</Button>
+				</WrapPanel>
+			</GroupBox>
+		</StackPanel>
+		<WrapPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+			<Button Command="{Binding Save}">Сохранить</Button>
+			<Button Command="{Binding Close}">Отмена</Button>
+		</WrapPanel>
+	</Grid>
+</form:FormBase>
