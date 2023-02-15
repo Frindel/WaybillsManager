@@ -72,12 +72,12 @@ namespace WaybillsManager.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string DBConnection {
+        public string DbDirectory {
             get {
-                return ((string)(this["DBConnection"]));
+                return ((string)(this["DbDirectory"]));
             }
             set {
-                this["DBConnection"] = value;
+                this["DbDirectory"] = value;
             }
         }
     }

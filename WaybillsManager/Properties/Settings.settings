@@ -14,7 +14,7 @@
     <Setting Name="DefaultExcelTemplate" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="DBConnection" Type="System.String" Scope="User">
+    <Setting Name="DbDirectory" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

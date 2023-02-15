@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Microsoft.Xaml.Behaviors.Core;
 using Prism.Mvvm;
 using System;
@@ -15,7 +16,7 @@ namespace WaybillsManager.ViewModel
 		private SettingsStorage _settings;
 
 		#region Propertys
-		public string DbConnection { get => _settings.DbConnectionString; set => _settings.DbConnectionString = value; }
+		public string DbDirectory { get => _settings.DbDirectory; set => _settings.DbDirectory = value; }
 
 		public ObservableCollection<OutputTemplate> WordTemplates { get => _settings.WordTemplates; }
 
@@ -48,16 +49,10 @@ namespace WaybillsManager.ViewModel
 		{
 			get => new ActionCommand(() =>
 			{
-				OpenFileDialog fileDialog = new OpenFileDialog();
-				fileDialog.Filter = "(*.doc, *.docx)|*.doc;*.docx";
-				fileDialog.ShowDialog();
+				string url = GetFileUrl(true, new CommonFileDialogFilter(string.Empty, "*.doc;*.docx"));
 
-				string url = fileDialog.FileName;
-
-				if (url == string.Empty)
-					return;
-
-				WordTemplates.Add(OutputTemplate.GetTemplateByUrl(url));
+				if (url != string.Empty)
+					WordTemplates.Add(OutputTemplate.GetTemplateByUrl(url));
 			});
 		}
 
@@ -74,16 +69,10 @@ namespace WaybillsManager.ViewModel
 		{
 			get => new ActionCommand(() =>
 			{
-				OpenFileDialog fileDialog = new OpenFileDialog();
-				fileDialog.Filter = "(*.xls)|*.xls";
-				fileDialog.ShowDialog();
+				string url = GetFileUrl(true, new CommonFileDialogFilter(string.Empty, ".xls"));
 
-				string url = fileDialog.FileName;
-
-				if (url == string.Empty)
-					return;
-
-				ExcelTemplates.Add(OutputTemplate.GetTemplateByUrl(url));
+				if (url!=string.Empty)
+					ExcelTemplates.Add(OutputTemplate.GetTemplateByUrl(url));
 			});
 		}
 
@@ -100,16 +89,10 @@ namespace WaybillsManager.ViewModel
 		{
 			get => new RelayCommand(_ =>
 			{
-				OpenFileDialog fileDialog = new OpenFileDialog();
-				fileDialog.Filter = "(*.db)|*.db";
-				fileDialog.ShowDialog();
+				string url = GetFileUrl(false);
 
-				string url = fileDialog.FileName;
-
-				if (url == string.Empty)
-					return;
-
-				DbConnection = url;
+				if (url != string.Empty)
+					DbDirectory = url;
 			});
 		}
 		#endregion
@@ -129,10 +112,30 @@ namespace WaybillsManager.ViewModel
 				if (e.PropertyName == nameof(_settings.DefaultExcelTemplate))
 					RaisePropertyChanged(nameof(DefaultExcelTemplate));
 
-				if (e.PropertyName == nameof(_settings.DbConnectionString))
-					RaisePropertyChanged(nameof(DbConnection));
+				if (e.PropertyName == nameof(_settings.DbDirectory))
+					RaisePropertyChanged(nameof(DbDirectory));
 			};
 		}
 
+		//возвращает файл/папку выбранные в проводнике Windows
+		private string GetFileUrl(bool isFile, CommonFileDialogFilter filter = null)
+		{
+			CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+
+			if (!isFile)
+				dialog.IsFolderPicker = true;
+
+			if (isFile && filter != null)
+				dialog.Filters.Add(filter);
+
+			CommonFileDialogResult dialogResult = dialog.ShowDialog();
+
+			string url = string.Empty;
+
+			if (dialogResult == CommonFileDialogResult.Ok)
+				url = dialog.FileName;
+
+			return url;
+		}
 	}
 }

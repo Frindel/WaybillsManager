@@ -21,13 +21,13 @@ namespace WaybillsManager.Model
 
 		#region Propertys
 
-		public string DbConnectionString
+		public string DbDirectory
 		{
-			get => _settings.DBConnection;
+			get => _settings.DbDirectory;
 			set
 			{
-				_settings.DBConnection = value;
-				RaisePropertyChanged(nameof(DbConnectionString));
+				_settings.DbDirectory = value;
+				RaisePropertyChanged(nameof(DbDirectory));
 			}
 		}
 

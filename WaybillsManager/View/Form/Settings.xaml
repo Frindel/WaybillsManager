@@ -55,7 +55,7 @@
 					</WrapPanel>
 					<WrapPanel>
 						<Label>Шаблон по умолчанию:</Label>
-						<ComboBox Width="150">
+						<ComboBox Width="150" ItemsSource="{Binding ExcelTemplates}" SelectedValue="{Binding DefaultExcelTemplate}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<TextBlock Text="{Binding FileName}"/>
@@ -68,8 +68,8 @@
 			<GroupBox>
 				<GroupBox.Header>База данных</GroupBox.Header>
 				<WrapPanel>
-					<Label>Путь</Label>
-					<TextBox Width="220" Text="{Binding DbConnection}"/>
+					<Label>Папка</Label>
+					<TextBox Width="220" Text="{Binding DbDirectory}"/>
 					<Button Command="{Binding SetDbConnection}">Обзор...</Button>
 				</WrapPanel>
 			</GroupBox>
