@@ -1,11 +1,14 @@
-﻿namespace WaybillsManager.Model.Data.Entitys
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace WaybillsManager.Model.Data.Entitys
 {
-	internal class Route
+	[Table("Routes")]
+	public class Route
 	{
 		public int Id { get; set; }
 
 		public RoutePoint StartPoint { get; set; }
 
-		public RoutePoint EndPoint {get; set;}
+		public RoutePoint? EndPoint {get; set;}
 	}
 }

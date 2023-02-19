@@ -13,11 +13,10 @@ namespace WaybillsManager.Model.Data
 
 		public DbSet<Driver> Drivers { get; set; } = null!;
 
-		public DbSet<RoutePoint> RoutePoints { get; set; } = null!;
+		public DbSet<Route> Routes { get; set; } = null!;
 
 		public ApplicationContext() : base()
 		{
-			Database.EnsureDeleted();
 			Database.EnsureCreated();
 		}
 

@@ -1,8 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WaybillsManager.Model.Data.Entitys
 {
-	internal class RoutePoint
+
+	[Table("RoutePoints")]
+	public class RoutePoint
 	{
 		public int Id { get; set; }
 

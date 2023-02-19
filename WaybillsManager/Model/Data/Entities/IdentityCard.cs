@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WaybillsManager.Model.Data.Entitys
 {
+	[Table("IdentityCards")]
 	public class IdentityCard
 	{
 		public int Id { get; set; }
