@@ -4,9 +4,9 @@ using WaybillsManager.View.Form;
 
 namespace WaybillsManager.View
 {
-	internal class FormController
+	public class FormController
 	{
-		private FormController _controller;
+		private static FormController _controller;
 
 		public Dictionary<string, ICollection<FormBase>> OpenForms { get; set; }
 
@@ -15,7 +15,7 @@ namespace WaybillsManager.View
 			OpenForms = new Dictionary<string, ICollection<FormBase>>();
 		}
 
-		public FormController GetController()
+		public static FormController GetController()
 		{
 			if (_controller == null)
 				_controller = new FormController();
@@ -50,11 +50,14 @@ namespace WaybillsManager.View
 				return;
 
 			// получение названия типа формы
-			string formType = form.GetType().GetCustomAttribute<FormTypeAttribute>().FormTypeName;
+			string formType = form.GetType().GetCustomAttribute<FormTypeAttribute>()?.FormTypeName ?? "";
+
+			if (formType == string.Empty)
+				return;
 
 			OpenForms[formType].Remove(form);
 
-			if (OpenForms[formType].Count==0)
+			if (OpenForms[formType].Count == 0)
 				OpenForms.Remove(formType);
 		}
 	}

@@ -4,9 +4,120 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WaybillsManager"
+		xmlns:converters="clr-namespace:WaybillsManager.Converters"
+		xmlns:svg="http://sharpvectors.codeplex.com/svgc/"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Менеджер путевок" Height="450" Width="800" Background="#EEE">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="auto"/>
+			<RowDefinition Height="auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+		<Menu>
+			<MenuItem Header="Файл">
+				<MenuItem Header="Настройки" Command="{Binding OpenSettings}"></MenuItem>
+				<Separator/>
+				<MenuItem Header="Выход"></MenuItem>
+			</MenuItem>
 
-    </Grid>
+			<MenuItem Header="Путевка">
+				<MenuItem Header="Добавить"/>
+				<MenuItem Header="Редактировать"/>
+				<MenuItem Header="Удалить"/>
+			</MenuItem>
+
+			<MenuItem Header="Вывод">
+				<MenuItem Header="В Word"/>
+				<MenuItem Header="В Excel"/>
+			</MenuItem>
+			<MenuItem Header="Справка">
+
+			</MenuItem>
+		</Menu>
+		<GroupBox Grid.Row="1">
+			<GroupBox.Header>Действия</GroupBox.Header>
+			<Grid>
+				<DockPanel HorizontalAlignment="Left">
+					<Button Style="{StaticResource actionButton}">
+						<svg:SvgViewbox Source="pack://application:,,,/Icons/add.svg"/>
+					</Button>
+					<Button Style="{StaticResource actionButton}">
+						<svg:SvgViewbox Source="pack://application:,,,/Icons/edit.svg"/>
+					</Button>
+					<Button Style="{StaticResource actionButton}">
+						<svg:SvgViewbox Source="pack://application:,,,/Icons/remove.svg"/>
+					</Button>
+				</DockPanel>
+			</Grid>
+			
+		</GroupBox>
+		<Grid Grid.Row="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="auto" MinWidth="150"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="auto"/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<GroupBox>
+					<GroupBox.Header>Поиск</GroupBox.Header>
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition Height="auto"/>
+						</Grid.RowDefinitions>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="auto"/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+							<StackPanel>
+								<Label>Периоды</Label>
+								<Label>Дата</Label>
+								<Label>Номер</Label>
+								<Label>Марка машины</Label>
+								<Label>Гос. номер</Label>
+								<Label>ФИО шафера</Label>
+								<Label>Задача</Label>
+							</StackPanel>
+							<StackPanel Grid.Column="1">
+								<ComboBox Width="120"/>
+								<DatePicker Width="120"/>
+								<TextBox Width="120"/>
+								<TextBox Width="120"/>
+								<TextBox Width="120"/>
+								<TextBox Width="120"/>
+								<TextBox Width="120"/>
+							</StackPanel>
+						</Grid>
+						<WrapPanel HorizontalAlignment="Right" Grid.Row="1">
+							<Button>Назад</Button>
+							<Button>Найти</Button>
+						</WrapPanel>
+					</Grid>
+				</GroupBox>
+			</Grid>
+			<DataGrid Grid.Column="1" ItemsSource="{Binding Storage}" AutoGenerateColumns="False">
+				<DataGrid.Columns>
+					<DataGridTextColumn Header="Дата" Width="*" Binding="{Binding Date}"/>
+					<DataGridTextColumn Header="Номер" Width="*" Binding="{Binding Number}"/>
+					<DataGridTextColumn Header="Марка машины" Width="*" Binding="{Binding CarStateNumber.Car.Name}"/>
+					<DataGridTextColumn Header="Гос. номер" Width="*" Binding="{Binding CarStateNumber.Number}"/>
+					<DataGridTextColumn Header="ФИО шафера" Width="*" Binding="{Binding IdentityCard.Driver.Name}"/>
+					<DataGridTextColumn Header="Задача" Width="*">
+						<DataGridTextColumn.Binding>
+							<Binding Path="Route">
+								<Binding.Converter>
+									<converters:RouteConverter/>
+								</Binding.Converter>
+							</Binding>
+						</DataGridTextColumn.Binding>
+					</DataGridTextColumn>
+				</DataGrid.Columns>
+			</DataGrid>
+		</Grid>
+	</Grid>
 </Window>

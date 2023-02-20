@@ -110,7 +110,7 @@ namespace WaybillsManager.Model
 		{
 			using (ApplicationContext context = new ApplicationContext())
 			{
-				_pages[pageIndex] = context.Waybills.Skip(pageIndex * PageSize).Take(PageSize)
+				_pages[pageIndex] = context.Waybills.OrderByDescending(w => w.Date.Year).Skip(pageIndex * PageSize).Take(PageSize)
 					.Include(w=>w.IdentityCard)
 						.ThenInclude(ic=>ic.Driver)
 					.Include(w=>w.CarStateNumber)
