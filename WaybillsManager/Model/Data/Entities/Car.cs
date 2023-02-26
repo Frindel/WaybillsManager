@@ -11,7 +11,5 @@ namespace WaybillsManager.Model.Data.Entitys
 
 		[MaxLength(48)]
 		public string Name { get; set; }
-
-		public List<CarStateNumber> CarStateNumbers { get; set; }
 	}
 }

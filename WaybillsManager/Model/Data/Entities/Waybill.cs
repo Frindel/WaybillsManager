@@ -2,7 +2,7 @@
 
 namespace WaybillsManager.Model.Data.Entitys
 {
-	internal class Waybill
+	public class Waybill
 	{
 		public int Id { get; set; }
 
@@ -13,6 +13,8 @@ namespace WaybillsManager.Model.Data.Entitys
 		public IdentityCard IdentityCard { get; set; }
 
 		public CarStateNumber CarStateNumber { get; set; }
+
+		public Car Car { get; set; }
 
 		public Route Route { get; set; }
 	}

@@ -8,12 +8,53 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Model\Data\Entitys\" />
+    <None Remove="Icons\add.svg" />
+    <None Remove="Icons\AddImg.png" />
+    <None Remove="Icons\DeleteImg.png" />
+    <None Remove="Icons\edit.svg" />
+    <None Remove="Icons\EditImg.png" />
+    <None Remove="Icons\incon.ico" />
+    <None Remove="Icons\PrintImg.png" />
+    <None Remove="Icons\remove.svg" />
+    <None Remove="Icons\SearchIcon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Model\ActionHandler\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.3" />
+    <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0" />
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
+    <PackageReference Include="SharpVectors.Wpf" Version="1.8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="CustomControls">
+      <HintPath>..\..\..\Lab\CustomControls\bin\Release\net6.0-windows\CustomControls.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Icons\add.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\edit.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\incon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\PrintImg.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\remove.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\SearchIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

@@ -2,41 +2,38 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using WaybillsManager.Model.Data;
 using WaybillsManager.Model.Data.Entitys;
 
 namespace WaybillsManager.Model
 {
-	internal class WaybillsStorage : IList<Waybill>, IList
+	public class WaybillsStorage : IList<Waybill>, IList, INotifyPropertyChanged, INotifyCollectionChanged
 	{
+		private static WaybillsStorage _storage;
+
+		private int _count = -1;
+
 		private Dictionary<int, IList> _pages;
-		private int _count;
 
-		public int PageSize { get; }
+		private readonly Waybill _emptyWaybill;
 
-		public int Count
-		{
-			get
-			{
-				return _count;
-			}
-			protected set
-			{
-				_count = value;
-			}
-		}
+		// контекст, используемый при выполнении операций добавления/редактирования
+		private ApplicationContext _context;
+		#region Events
 
-		public bool IsReadOnly => true;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
-		public bool IsFixedSize => false;
+		public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-		public bool IsSynchronized => false;
+		#endregion
 
-		public object SyncRoot => this;
-
-		object? IList.this[int index] { get => this[index]; set => throw new NotImplementedException(); }
+		#region Indexer
 
 		public Waybill this[int index]
 		{
@@ -47,86 +44,222 @@ namespace WaybillsManager.Model
 
 				if (!_pages.ContainsKey(pageIndex))
 				{
-					_pages.Clear();
 					LoadPage(pageIndex);
 				}
 
 				if (localIndex > PageSize / 2 && pageIndex < Count / PageSize)
 				{
+					if (!_pages.ContainsKey(pageIndex+1))
 					LoadPage(pageIndex + 1);
 					RemovePage(pageIndex - 1);
 				}
+
 				if (localIndex < PageSize / 2 && pageIndex > 0)
 				{
-					LoadPage(pageIndex - 1);
+					if (!_pages.ContainsKey(pageIndex - 1))
+						LoadPage(pageIndex - 1);
 					RemovePage(pageIndex + 1);
 				}
 
-
 				return (Waybill)_pages[pageIndex][localIndex];
 			}
-			set { }
 		}
 
 
-		public WaybillsStorage(int pageSize = 50)
+		object? IList.this[int index] { get => this[index]; set => throw new NotImplementedException(); }
+
+		Waybill IList<Waybill>.this[int index] { get => this[index]; set => throw new NotImplementedException(); }
+		#endregion
+
+		#region Propertys
+
+		public int Count
+		{
+			get
+			{
+				if (_count == -1)
+				{
+					_count = GetCount();
+				}
+				return _count;
+			}
+			private set
+			{
+				_count = value;
+				OnPropertyChanged(nameof(Count));
+			}
+		}
+
+		public int PageSize { get; }
+
+		public bool IsReadOnly { get; } = true;
+
+		public bool IsSynchronized { get; } = false;
+
+		public object SyncRoot { get; } = _storage;
+
+		public bool IsFixedSize => false;
+
+		#endregion
+
+		#region Singleton
+
+		private WaybillsStorage(int pageSize)
 		{
 			PageSize = pageSize;
-			GetCount();
 
 			_pages = new Dictionary<int, IList>();
+
+			_emptyWaybill = new Waybill()
+			{
+				IdentityCard = new IdentityCard()
+				{
+					Driver = new Driver()
+				},
+				CarStateNumber = new CarStateNumber(),
+				Car = new Car(),
+				Route = new Route()
+				{
+					StartPoint = new RoutePoint(),
+					EndPoint = new RoutePoint()
+				}
+			};
 		}
 
-		#region Waybill actions
-
-		public async Task AddWaybill (Waybill waybill)
+		public static WaybillsStorage Get(int pageSize = 200)
 		{
-
-		}
-
-		public async Task EditWaybill(Waybill waybill)
-		{
-
-		}
-
-		public async Task RemoveWaybill(Waybill waybill)
-		{
-
+			if (_storage == null)
+				_storage = new WaybillsStorage(pageSize);
+			return _storage;
 		}
 
 		#endregion
 
-		#region Storage methods
+		#region Waybills methods
 
-		private void GetCount()
+		public async Task AddWaybillAsync(Waybill waybill)
+		{
+			await Task.Run(() =>
+			{
+
+				lock (_pages)
+				{
+
+					using (_context = new ApplicationContext())
+					{
+						try
+						{
+							_context.Database.BeginTransaction();
+
+							waybill.Car = GetOrCreateCar(waybill.Car);
+
+							waybill.CarStateNumber = GetOrCreateCarStateNumber(waybill.CarStateNumber);
+
+							waybill.IdentityCard = GetOrCreateIdntityCard(waybill.IdentityCard);
+
+							waybill.Route = GetOrCreateRoute(waybill.Route);
+
+							_context.Waybills.Add(waybill);
+
+							// добавление записи
+							_context.SaveChanges();
+
+							_context.Database.CommitTransaction();
+						}
+						catch (Exception e)
+						{
+							_context.Database.RollbackTransaction();
+							MessageBox.Show("При сохранении путевки возникла ошибка.");
+						}
+					}
+
+				}
+			});
+
+			// уведомление представления об изменениях
+			int localIndex = Count % PageSize;
+			int pageIndex = Count / PageSize;
+
+			LoadPage(pageIndex);
+
+			_pages[pageIndex].RemoveAt(localIndex);
+			_pages[pageIndex].Add(waybill);
+
+			Count++;
+			OnPropertyChanged("Item[]");
+
+			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, waybill, Count - 1));
+		}
+
+		public async Task RemoveWaybillAsync(Waybill waybill)
+		{
+			int index = IndexOf(waybill);
+
+			await Task.Run(() =>
+			{
+				using (ApplicationContext context = new ApplicationContext())
+				{
+					context.Waybills.Remove(waybill);
+					context.SaveChanges();
+				}
+			});
+
+			LoadPage(index / PageSize);
+
+			Count--;
+			OnPropertyChanged("Item[]");
+			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, waybill, index));
+		}
+		#endregion
+
+		#region IList methods
+
+		public int Add(object? value)
+		{
+			Add((Waybill)value);
+
+			return Count;
+		}
+
+		public void Add(Waybill item)
+		{
+			int index = Count;
+
+			this.Insert(index, item);
+
+		}
+
+		public void Clear()
+		{
+			_pages.Clear();
+
+			//todo: уведомление об изменении
+		}
+
+		public bool Contains(object? value)
+		{
+			return Contains((Waybill)value);
+		}
+
+		// выполняет проверку существования путевки с данным номером в данном периоде
+		public bool Contains(Waybill item)
 		{
 			using (ApplicationContext context = new ApplicationContext())
 			{
-				Count = context.Waybills.Count();
+				return context.Waybills
+					.Where(w => w.Number == item.Number && w.Date.Year == item.Date.Year)
+					.FirstOrDefault() != null;
 			}
 		}
 
-		private void LoadPage(int pageIndex, bool useSincContext = true)
+		public void CopyTo(Array array, int index)
 		{
-			using (ApplicationContext context = new ApplicationContext())
-			{
-				_pages[pageIndex] = context.Waybills.OrderByDescending(w => w.Date.Year).Skip(pageIndex * PageSize).Take(PageSize)
-					.Include(w=>w.IdentityCard)
-						.ThenInclude(ic=>ic.Driver)
-					.Include(w=>w.CarStateNumber)
-						.ThenInclude(csn=>csn.Car)
-					.Include(w=>w.Route)
-						.ThenInclude(r=>r.StartPoint)
-					.Include(w => w.Route)
-						.ThenInclude(r => r.EndPoint)
-					.ToArray();
-			};
+			CopyTo(array, index);
 		}
 
-		private void RemovePage(int pageIndex)
+		public void CopyTo(Waybill[] array, int arrayIndex)
 		{
-			if (_pages.ContainsKey(pageIndex))
-				_pages.Remove(pageIndex);
+			throw new NotImplementedException();
 		}
 
 		public IEnumerator<Waybill> GetEnumerator()
@@ -137,85 +270,202 @@ namespace WaybillsManager.Model
 			}
 		}
 
-		IEnumerator IEnumerable.GetEnumerator()
+		public void Remove(object? value)
 		{
-			return GetEnumerator();
-		}
-
-		#endregion
-
-		#region IList<Waybill>
-
-		public int IndexOf(Waybill item)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public void Insert(int index, Waybill item)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public void RemoveAt(int index)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public void Add(Waybill item)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public void Clear()
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public bool Contains(Waybill item)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public void CopyTo(Waybill[] array, int arrayIndex)
-		{
-			throw new System.NotImplementedException();
+			Remove((Waybill)value);
 		}
 
 		public bool Remove(Waybill item)
 		{
-			throw new System.NotImplementedException();
-		}
-
-		public int Add(object? value)
-		{
 			throw new NotImplementedException();
 		}
 
-		public bool Contains(object? value)
+		public void RemoveAt(int index)
 		{
 			throw new NotImplementedException();
 		}
 
 		public int IndexOf(object? value)
 		{
-			return -1;
+			return IndexOf((Waybill)value);
+		}
+
+		public int IndexOf(Waybill item)
+		{
+			// todo: реализовать получение индекса элемента
+
+			using (ApplicationContext context = new ApplicationContext())
+			{
+				return context.Waybills
+					.OrderBy(w => w.Date)
+					.ThenBy(w => w.Number)
+					.AsEnumerable()
+					.Select((w, i) => new { Waybill = w, Index = i })
+					.Where(w => w.Waybill.Id == item.Id).Select(w=>w.Index).SingleOrDefault();
+			}
 		}
 
 		public void Insert(int index, object? value)
 		{
-			throw new NotImplementedException();
+			Insert(index, (Waybill)value);
 		}
 
-		public void Remove(object? value)
+		public void Insert(int index, Waybill item)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void CopyTo(Array array, int index)
+		#endregion
+
+		#region Protected methods
+
+		IEnumerator IEnumerable.GetEnumerator()
 		{
-			throw new NotImplementedException();
+			return GetEnumerator();
 		}
 
+		private void OnPropertyChanged(string propertyName)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		private void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
+		{
+			CollectionChanged?.Invoke(this, args);
+		}
+
+		private int GetCount()
+		{
+			using (ApplicationContext context = new ApplicationContext())
+			{
+				return context.Waybills.Count();
+			}
+		}
+
+		private void LoadPage(int pageIndex)
+		{
+			using (ApplicationContext context = new ApplicationContext())
+			{
+
+				_pages[pageIndex] = context.Waybills.OrderBy(w => w.Date).ThenBy(w => w.Number).Skip(pageIndex * PageSize).Take(PageSize)
+					.Include(w => w.IdentityCard)
+						.ThenInclude(ic => ic.Driver)
+					.Include(w => w.CarStateNumber)
+					.Include(w => w.Car)
+					.Include(w => w.Route)
+						.ThenInclude(r => r.StartPoint)
+					.Include(w => w.Route)
+						.ThenInclude(r => r.EndPoint)
+					.ToList();
+			};
+		}
+
+		private void RemovePage(int pageIndex)
+		{
+			if (_pages.ContainsKey(pageIndex))
+				_pages.Remove(pageIndex);
+		}
+
+		// создает или возвращает из БД машину с переданными характеристиками 
+		private Car GetOrCreateCar(Car car)
+		{
+			Car? returnedСar = _context.Cars.Where(c => c.Name == car.Name).FirstOrDefault();
+
+			if (returnedСar == null)
+				returnedСar = new Car() { Name = car.Name };
+
+			// todo: вызов события добавления подсказки
+
+			return returnedСar;
+		}
+
+		// создает или возвращает из БД гос. номер машины с переданными характеристиками 
+		private CarStateNumber GetOrCreateCarStateNumber(CarStateNumber carStateNumber)
+		{
+			var a = _context.CarStateNumbers.ToList();
+
+			var b = _context.CarStateNumbers.Where(csn => csn.Number == carStateNumber.Number).ToList();
+
+			var c = a[1].Number.CompareTo(carStateNumber.Number);
+
+			CarStateNumber? returnedCarStateNumber = _context.CarStateNumbers
+				.Where(csn => csn.Number.ToLower().CompareTo(carStateNumber.Number) == 0).FirstOrDefault();
+
+			if (returnedCarStateNumber == null)
+				returnedCarStateNumber = new CarStateNumber() { Number = carStateNumber.Number };
+
+			return returnedCarStateNumber;
+		}
+
+		// создает или возвращает из БД гос. удостоверение и информацию о водителе с переданными характеристиками 
+		private IdentityCard GetOrCreateIdntityCard(IdentityCard identityCard)
+		{
+			IdentityCard? returnedIdentityCard = _context.IdentityCards
+				.Include(ic => ic.Driver)
+				.Where(ic => ic.Number == identityCard.Number)
+				.FirstOrDefault();
+
+			if (returnedIdentityCard == null)
+			{
+				returnedIdentityCard = new IdentityCard() { Number = identityCard.Number };
+
+				Driver? returnedDriver = _context.Drivers
+					.Where(d => d.Name == identityCard.Driver.Name)
+					.FirstOrDefault();
+
+				if (returnedDriver == null)
+				{
+					returnedDriver = new Driver() { Name = identityCard.Driver.Name };
+				}
+
+				returnedIdentityCard.Driver = returnedDriver;
+			}
+
+			return returnedIdentityCard;
+		}
+
+		// создает или возвращает из БД маршрут с переданными характеристиками 
+		private Route GetOrCreateRoute(Route route)
+		{
+			Route? returnedRoute = _context.Routes
+				.Include(r => r.StartPoint)
+				.Include(r => r.EndPoint)
+				.Where(r => r.StartPoint.Name == route.StartPoint.Name &&
+					route.EndPoint != null && r.EndPoint.Name == route.EndPoint.Name)
+				.FirstOrDefault();
+
+			if (returnedRoute == null)
+			{
+				returnedRoute = new Route();
+
+				RoutePoint startPoint = _context.RoutePoints.Where(rp => rp.Name == route.StartPoint.Name).FirstOrDefault();
+
+				if (startPoint == null)
+				{
+					startPoint = new RoutePoint() { Name = route.StartPoint.Name };
+				}
+
+				returnedRoute.StartPoint = startPoint;
+
+				if (route.EndPoint == null || route.EndPoint.Name == string.Empty)
+				{
+					returnedRoute.EndPoint = null;
+					return returnedRoute;
+				}
+
+				RoutePoint endPoint = _context.RoutePoints.Where(rp => rp.Name == route.EndPoint.Name)
+					.FirstOrDefault();
+
+				if (endPoint == null)
+				{
+					endPoint = new RoutePoint() { Name = route.EndPoint.Name };
+				}
+
+				returnedRoute.EndPoint = endPoint;
+			}
+
+			return returnedRoute;
+		}
 		#endregion
 	}
 }

@@ -13,7 +13,13 @@ namespace WaybillsManager.Model.Data
 
 		public DbSet<Driver> Drivers { get; set; } = null!;
 
+		public DbSet<CarStateNumber> CarStateNumbers { get; set; } = null!;
+
 		public DbSet<Route> Routes { get; set; } = null!;
+
+		public DbSet<IdentityCard> IdentityCards { get; set; } = null!;
+
+		public DbSet<RoutePoint> RoutePoints { get; set;} = null!;
 
 		public ApplicationContext() : base()
 		{
@@ -30,6 +36,11 @@ namespace WaybillsManager.Model.Data
 			optionsBuilder.UseSqlite(connectionStr);
 			
 			// todo: установка уникальной комбинации номера и года
+		}
+
+		protected override void OnModelCreating(ModelBuilder builder)
+		{
+
 		}
 	}
 }

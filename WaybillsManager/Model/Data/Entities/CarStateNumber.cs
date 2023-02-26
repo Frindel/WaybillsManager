@@ -11,7 +11,5 @@ namespace WaybillsManager.Model.Data.Entitys
 
 		[MaxLength(12)]
 		public string Number { get; set; }
-
-		public Car Car { get; set; }
 	}
 }

@@ -14,7 +14,6 @@ namespace WaybillsManager.View.Form
 		}
 	}
 
-
 	public delegate void FormDelegate(object sender, FormFilledArgs args);
 
 	// основа формы
