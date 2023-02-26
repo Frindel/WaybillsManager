@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -13,6 +12,13 @@ using WaybillsManager.Model.Data.Entitys;
 
 namespace WaybillsManager.Model
 {
+	public class NewElementArgs : EventArgs
+	{
+		public Type HintsType { get; }
+	}
+
+	public delegate void NewElementDelegate(object obj, NewElementArgs args);
+
 	public class WaybillsStorage : IList<Waybill>, IList, INotifyPropertyChanged, INotifyCollectionChanged
 	{
 		private static WaybillsStorage _storage;
@@ -25,11 +31,18 @@ namespace WaybillsManager.Model
 
 		// контекст, используемый при выполнении операций добавления/редактирования
 		private ApplicationContext _context;
+
+		// задачи преждевременной загрузки страцниц
+		private List<int> _pageLoaded;
+
+		private Dictionary<int, DateTime> _pageTouchTimes;
 		#region Events
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public event NotifyCollectionChangedEventHandler? CollectionChanged;
+
+		public event NewElementDelegate? NewWaybillElement;
 
 		#endregion
 
@@ -42,6 +55,8 @@ namespace WaybillsManager.Model
 				int localIndex = index % PageSize;
 				int pageIndex = index / PageSize;
 
+				CleanUpPages();
+
 				if (!_pages.ContainsKey(pageIndex))
 				{
 					LoadPage(pageIndex);
@@ -49,16 +64,12 @@ namespace WaybillsManager.Model
 
 				if (localIndex > PageSize / 2 && pageIndex < Count / PageSize)
 				{
-					if (!_pages.ContainsKey(pageIndex+1))
-					LoadPage(pageIndex + 1);
-					RemovePage(pageIndex - 1);
+					LoadPageAsync(pageIndex + 1);
 				}
 
 				if (localIndex < PageSize / 2 && pageIndex > 0)
 				{
-					if (!_pages.ContainsKey(pageIndex - 1))
-						LoadPage(pageIndex - 1);
-					RemovePage(pageIndex + 1);
+					LoadPageAsync(pageIndex - 1);
 				}
 
 				return (Waybill)_pages[pageIndex][localIndex];
@@ -110,20 +121,9 @@ namespace WaybillsManager.Model
 
 			_pages = new Dictionary<int, IList>();
 
-			_emptyWaybill = new Waybill()
-			{
-				IdentityCard = new IdentityCard()
-				{
-					Driver = new Driver()
-				},
-				CarStateNumber = new CarStateNumber(),
-				Car = new Car(),
-				Route = new Route()
-				{
-					StartPoint = new RoutePoint(),
-					EndPoint = new RoutePoint()
-				}
-			};
+			_pageLoaded = new List<int>();
+
+			_pageTouchTimes = new Dictionary<int, DateTime>();
 		}
 
 		public static WaybillsStorage Get(int pageSize = 200)
@@ -301,7 +301,7 @@ namespace WaybillsManager.Model
 					.ThenBy(w => w.Number)
 					.AsEnumerable()
 					.Select((w, i) => new { Waybill = w, Index = i })
-					.Where(w => w.Waybill.Id == item.Id).Select(w=>w.Index).SingleOrDefault();
+					.Where(w => w.Waybill.Id == item.Id).Select(w => w.Index).SingleOrDefault();
 			}
 		}
 
@@ -342,12 +342,35 @@ namespace WaybillsManager.Model
 			}
 		}
 
+		private async Task LoadPageAsync(int pageIndex)
+		{
+			if (_pages.ContainsKey(pageIndex) || _pageLoaded.Contains(pageIndex))
+				return;
+
+			_pageLoaded.Add(pageIndex);
+
+			IList waybills = await Task.Run(() => GetPage(pageIndex));
+
+			_pages[pageIndex] = waybills;
+
+			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+
+			_pageLoaded.Remove(pageIndex);
+		}
+
 		private void LoadPage(int pageIndex)
 		{
+			_pages[pageIndex] = GetPage(pageIndex);
+		}
+
+		private IList GetPage(int pageIndex)
+		{
+			_pageTouchTimes[pageIndex] = DateTime.Now;
+
 			using (ApplicationContext context = new ApplicationContext())
 			{
 
-				_pages[pageIndex] = context.Waybills.OrderBy(w => w.Date).ThenBy(w => w.Number).Skip(pageIndex * PageSize).Take(PageSize)
+				return context.Waybills.OrderBy(w => w.Date).ThenBy(w => w.Number).Skip(pageIndex * PageSize).Take(PageSize)
 					.Include(w => w.IdentityCard)
 						.ThenInclude(ic => ic.Driver)
 					.Include(w => w.CarStateNumber)
@@ -360,10 +383,16 @@ namespace WaybillsManager.Model
 			};
 		}
 
-		private void RemovePage(int pageIndex)
+		private void CleanUpPages()
 		{
-			if (_pages.ContainsKey(pageIndex))
-				_pages.Remove(pageIndex);
+			foreach (int pageNumber in _pageTouchTimes.Keys)
+			{
+				if ((DateTime.Now - _pageTouchTimes[pageNumber]).TotalSeconds > 5)
+				{
+					_pages.Remove(pageNumber);
+					_pageTouchTimes.Remove(pageNumber);
+				}
+			}
 		}
 
 		// создает или возвращает из БД машину с переданными характеристиками 
