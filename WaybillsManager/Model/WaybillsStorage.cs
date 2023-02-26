@@ -244,6 +244,9 @@ namespace WaybillsManager.Model
 		// выполняет проверку существования путевки с данным номером в данном периоде
 		public bool Contains(Waybill item)
 		{
+			if (item == null)
+				return false;
+
 			using (ApplicationContext context = new ApplicationContext())
 			{
 				return context.Waybills
@@ -476,7 +479,7 @@ namespace WaybillsManager.Model
 
 				returnedRoute.StartPoint = startPoint;
 
-				if (route.EndPoint == null || route.EndPoint.Name == string.Empty)
+				if (route.EndPoint == null || route.EndPoint.Name == null || route.EndPoint.Name == string.Empty)
 				{
 					returnedRoute.EndPoint = null;
 					return returnedRoute;
@@ -495,6 +498,7 @@ namespace WaybillsManager.Model
 
 			return returnedRoute;
 		}
+
 		#endregion
 	}
 }
