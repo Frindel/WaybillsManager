@@ -12,8 +12,6 @@ namespace WaybillsManager
 		{
 			InitializeComponent();
 
-			AppLoader.Initialization();
-
 			DataContext = new ViewModel.AppWindowViewModel();
 
 			// устанавливает вниз позицию ползунка полосы прокрутки

@@ -1,0 +1,149 @@
+﻿<form:FormBase x:Class="WaybillsManager.View.Form.EditWaybill"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:WaybillsManager.View.Form"
+		xmlns:form="clr-namespace:WaybillsManager.View.Form"
+		xmlns:controls ="clr-namespace:CustomControls;assembly=CustomControls"
+		xmlns:converters ="clr-namespace:WaybillsManager.Converters"
+		xmlns:validations="clr-namespace:WaybillsManager.Validations"
+		mc:Ignorable="d"
+		Title="EditWaybill" Height="320" Width="300" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition Height="auto"/>
+		</Grid.RowDefinitions>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="auto"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+			<StackPanel Margin="8,0,0,0">
+				<Label>Номер</Label>
+				<Label>Дата</Label>
+				<Label>Марка машины</Label>
+				<Label>Гос. номер</Label>
+				<Label>ФИО шафера</Label>
+				<Label>Удостоверение №</Label>
+				<Label>Задание</Label>
+			</StackPanel>
+			<StackPanel Grid.Column="1" Margin="0,0,8,0">
+				<!--Номер-->
+				<TextBox x:Name="number" TabIndex="0">
+					<TextBox.Text>
+						<Binding Path="Waybill.Number" UpdateSourceTrigger="PropertyChanged">
+							<Binding.ValidationRules>
+								<validations:StringNotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+								<validations:CanParseValidationRule ValidationType="UInt32"/>
+							</Binding.ValidationRules>
+							<Binding.Converter>
+								<converters:NumberConverter/>
+							</Binding.Converter>
+						</Binding>
+					</TextBox.Text>
+				</TextBox>
+				<!--Дата-->
+				<DatePicker x:Name="date">
+					<DatePicker.Text>
+						<Binding Path="Waybill.Date" UpdateSourceTrigger="PropertyChanged">
+							<Binding.Converter>
+								<converters:DateOnlyConverter/>
+							</Binding.Converter>
+							<Binding.ValidationRules>
+								<validations:CanParseValidationRule ValidationType="DateOnly" ValidatesOnTargetUpdated="True"/>
+							</Binding.ValidationRules>
+						</Binding>
+					</DatePicker.Text>
+				</DatePicker>
+
+				<!--Марка машины-->
+				<controls:TextBoxHints x:Name="carName" Variants="{Binding CarNames}">
+					<controls:TextBoxHints.Text>
+						<Binding Path="Waybill.Car.Name">
+							<Binding.ValidationRules>
+								<validations:StringNotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+							</Binding.ValidationRules>
+						</Binding>
+					</controls:TextBoxHints.Text>
+				</controls:TextBoxHints>
+
+				<!--Гос. номер-->
+				<controls:TextBoxHints x:Name="stateNumber" Variants="{Binding StateNumbers}">
+					<controls:TextBoxHints.Text>
+						<Binding Path="Waybill.CarStateNumber.Number">
+							<Binding.ValidationRules>
+								<validations:StringNotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+							</Binding.ValidationRules>
+						</Binding>
+					</controls:TextBoxHints.Text>
+				</controls:TextBoxHints>
+
+				<!--ФИО шафера-->
+				<controls:TextBoxHints x:Name="driverName" Variants="{Binding DriverNames}">
+					<controls:TextBoxHints.Text>
+						<Binding Path="Waybill.IdentityCard.Driver.Name">
+							<Binding.ValidationRules>
+								<validations:StringNotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+							</Binding.ValidationRules>
+						</Binding>
+					</controls:TextBoxHints.Text>
+				</controls:TextBoxHints>
+
+				<!--Удостоверение-->
+				<controls:TextBoxHints x:Name="identityCard" Variants="{Binding IdentityCards}">
+					<controls:TextBoxHints.Text>
+						<Binding Path="Waybill.IdentityCard.Number">
+							<Binding.ValidationRules>
+								<validations:StringNotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+							</Binding.ValidationRules>
+						</Binding>
+					</controls:TextBoxHints.Text>
+				</controls:TextBoxHints>
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition Width="auto"/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+
+					<!--Место отправления-->
+					<controls:TextBoxHints x:Name="startPoint" Grid.Column="0" Variants="{Binding RoutePoints}">
+						<controls:TextBoxHints.Text>
+							<Binding Path="Waybill.Route.StartPoint.Name">
+								<Binding.ValidationRules>
+									<validations:StringNotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+								</Binding.ValidationRules>
+							</Binding>
+						</controls:TextBoxHints.Text>
+					</controls:TextBoxHints>
+					<TextBlock Grid.Column="1" VerticalAlignment="Center"> -</TextBlock>
+
+					<!--Место прибытия-->
+					<controls:TextBoxHints Grid.Column="2" Variants="{Binding RoutePoints}" Text="{Binding Waybill.Route.EndPoint.Name}"/>
+				</Grid>
+			</StackPanel>
+		</Grid>
+		<WrapPanel Grid.Row="1" HorizontalAlignment="Right">
+			<Button Command="{Binding Add}">Добавить
+				<Button.CommandParameter>
+					<MultiBinding>
+						<MultiBinding.Converter>
+							<converters:ErrorsExistMultiConverter/>
+						</MultiBinding.Converter>
+						<MultiBinding.Bindings>
+							<Binding ElementName="number" Path="(Validation.HasError)"/>
+							<Binding ElementName="date" Path="(Validation.HasError)"/>
+							<Binding ElementName="carName" Path="(Validation.HasError)"/>
+							<Binding ElementName="stateNumber" Path="(Validation.HasError)"/>
+							<Binding ElementName="identityCard" Path="(Validation.HasError)"/>
+							<Binding ElementName="startPoint" Path="(Validation.HasError)"/>
+						</MultiBinding.Bindings>
+					</MultiBinding>
+				</Button.CommandParameter>
+			</Button>
+			<Button Command="{Binding Close}">Отмена</Button>
+		</WrapPanel>
+	</Grid>
+</form:FormBase>

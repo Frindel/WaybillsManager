@@ -1,4 +1,5 @@
 ﻿using System;
+using WaybillsManager.Model.Data.Entities;
 using System.Windows;
 
 namespace WaybillsManager.View.Form
@@ -20,6 +21,18 @@ namespace WaybillsManager.View.Form
 	public abstract class FormBase : Window
 	{
 		public event FormDelegate FormFilled;
+
+		public Waybill Waybill { get; } = null;
+
+		public FormBase()
+		{
+
+		}
+
+		public FormBase(Waybill waybill)
+		{
+			Waybill = waybill;
+		}
 
 		// вызов события заполнения формы
 		protected virtual void Fill<T>(T value)

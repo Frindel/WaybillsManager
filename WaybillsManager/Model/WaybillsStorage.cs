@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -197,6 +199,58 @@ namespace WaybillsManager.Model
 			OnPropertyChanged("Item[]");
 
 			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, waybill, Count - 1));
+
+			// вызов собития добавления нового элемента путевки
+			OnNewElementsEvent();
+		}
+
+		public async Task EditWaybilllAsync(Waybill waybill)
+		{
+			int index = IndexOf(waybill);
+
+			await Task.Run(() =>
+			{
+
+				lock (_pages)
+				{
+
+					using (_context = new ApplicationContext())
+					{
+						try
+						{
+							_context.Database.BeginTransaction();
+
+							waybill.Car = GetOrCreateCar(waybill.Car);
+
+							waybill.CarStateNumber = GetOrCreateCarStateNumber(waybill.CarStateNumber);
+
+							waybill.IdentityCard = GetOrCreateIdntityCard(waybill.IdentityCard);
+
+							waybill.Route = GetOrCreateRoute(waybill.Route);
+
+							_context.Waybills.Update(waybill);
+
+							// добавление записи
+							_context.SaveChanges();
+
+							_context.Database.CommitTransaction();
+						}
+						catch (Exception e)
+						{
+							_context.Database.RollbackTransaction();
+							MessageBox.Show("При сохранении путевки возникла ошибка.");
+						}
+					}
+
+				}
+			});
+
+			// уведомление представления об изменениях
+			LoadPage(index / PageSize);
+
+			OnPropertyChanged("Item[]");
+
+			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, this[index], waybill, index));
 
 			// вызов собития добавления нового элемента путевки
 			OnNewElementsEvent();

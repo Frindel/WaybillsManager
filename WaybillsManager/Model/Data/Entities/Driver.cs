@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WaybillsManager.Model.Data.Entities
 {
 	[Table("Drivers")]
-	public class Driver
+	public class Driver : ICloneable
 	{
 		public int Id { get; set; }
 
@@ -13,5 +14,14 @@ namespace WaybillsManager.Model.Data.Entities
 		public string Name { get; set; }
 
 		public List<IdentityCard> IdentityCards { get; set; }
+
+		public object Clone ()
+		{
+			return new Driver()
+			{
+				Id = Id,
+				Name = Name
+			};
+		}
 	}
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows;
 using WaybillsManager.Model;
 using WaybillsManager.Model.Data.Entities;
@@ -31,9 +30,20 @@ namespace WaybillsManager.ViewModel
 			});
 		}
 
+		public RelayCommand EditWaybill
+		{
+			get => new RelayCommand(obj =>
+			{
+				Waybill waybill = (Waybill)obj;
+
+				_formController.DisplayForm(new EditWaybill(waybill));
+			},
+			obj => obj is Waybill waybill && (!_formController.OpenForms.ContainsKey("EditWaybill") || _formController.OpenForms["EditWaybill"].Where(f => f?.Waybill.Id == waybill.Id).FirstOrDefault() == null));
+		}
+
 		public RelayCommand RemoveWaybill
 		{
-			get => new RelayCommand(waybill=>
+			get => new RelayCommand(waybill =>
 			{
 				// todo: проверка отсутствия открытых форм редактирования для удаляемой путевки
 
@@ -42,7 +52,7 @@ namespace WaybillsManager.ViewModel
 
 				Storage.RemoveWaybillAsync(waybill as Waybill);
 			},
-			waybill => waybill as Waybill !=null);
+			obj => obj is Waybill waybill && (!_formController.OpenForms.ContainsKey("EditWaybill") || _formController.OpenForms["EditWaybill"].Where(f => f?.Waybill.Id == waybill.Id).FirstOrDefault() == null));
 		}
 
 		public AppWindowViewModel()

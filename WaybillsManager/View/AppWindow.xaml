@@ -6,8 +6,9 @@
         xmlns:local="clr-namespace:WaybillsManager"
 		xmlns:converters="clr-namespace:WaybillsManager.Converters"
 		xmlns:svg="http://sharpvectors.codeplex.com/svgc/"
+		xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="Менеджер путевок" Height="450" Width="800" Background="#EEE">
+        Title="Менеджер путевок" Height="450" Width="800" Background="#EEE" WindowStartupLocation="CenterScreen">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="auto"/>
@@ -23,8 +24,16 @@
 
 			<MenuItem Header="Путевка">
 				<MenuItem Header="Добавить" Command="{Binding AddWaybill}"/>
-				<MenuItem Header="Редактировать"/>
-				<MenuItem Header="Удалить"/>
+				<MenuItem Header="Редактировать" Command="{Binding EditWaybill}">
+					<MenuItem.CommandParameter>
+						<Binding ElementName="waybillsList" Path="SelectedValue"/>
+					</MenuItem.CommandParameter>
+				</MenuItem>
+				<MenuItem Header="Удалить" Command="{Binding RemoveWaybill}">
+					<MenuItem.CommandParameter>
+						<Binding ElementName="waybillsList" Path="SelectedValue"/>
+					</MenuItem.CommandParameter>
+				</MenuItem>
 			</MenuItem>
 
 			<MenuItem Header="Вывод">
@@ -42,7 +51,10 @@
 					<Button Style="{StaticResource actionButton}" Command="{Binding AddWaybill}">
 						<svg:SvgViewbox Source="pack://application:,,,/Icons/add.svg"/>
 					</Button>
-					<Button Style="{StaticResource actionButton}">
+					<Button Style="{StaticResource actionButton}" Command="{Binding EditWaybill}">
+						<Button.CommandParameter>
+							<Binding ElementName="waybillsList" Path="SelectedValue"/>
+						</Button.CommandParameter>
 						<svg:SvgViewbox Source="pack://application:,,,/Icons/edit.svg"/>
 					</Button>
 					<Button Style="{StaticResource actionButton}" Command="{Binding RemoveWaybill}">
@@ -97,6 +109,15 @@
 			</Grid>
 			</GroupBox>
 			<DataGrid x:Name="waybillsList" Grid.Column="1" ItemsSource="{Binding Storage}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single">
+				<i:Interaction.Triggers>
+					<i:EventTrigger EventName="MouseDoubleClick">
+						<i:InvokeCommandAction Command="{Binding EditWaybill}">
+							<i:InvokeCommandAction.CommandParameter>
+								<Binding ElementName="waybillsList" Path="SelectedValue"/>
+							</i:InvokeCommandAction.CommandParameter>
+						</i:InvokeCommandAction>
+					</i:EventTrigger>
+				</i:Interaction.Triggers>
 				<DataGrid.Columns>
 					<DataGridTextColumn Header="Дата" Width="*" Binding="{Binding Date}"/>
 					<DataGridTextColumn Header="Номер" Width="*" Binding="{Binding Number}"/>
