@@ -4,7 +4,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using WaybillsManager.Model;
-using WaybillsManager.Model.Data.Entitys;
+using WaybillsManager.Model.Data.Entities;
 using WaybillsManager.View.Form;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 

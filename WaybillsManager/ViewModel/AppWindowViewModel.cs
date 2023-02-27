@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Windows;
 using WaybillsManager.Model;
-using WaybillsManager.Model.Data.Entitys;
+using WaybillsManager.Model.Data.Entities;
 using WaybillsManager.View;
 using WaybillsManager.View.Form;
 

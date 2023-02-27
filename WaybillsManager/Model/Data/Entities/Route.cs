@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WaybillsManager.Model.Data.Entitys
+namespace WaybillsManager.Model.Data.Entities
 {
 	[Table("Routes")]
 	public class Route

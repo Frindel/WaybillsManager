@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using WaybillsManager.Model.Data.Entitys;
+using WaybillsManager.Model.Data.Entities;
 
 namespace WaybillsManager.Model.Data
 {

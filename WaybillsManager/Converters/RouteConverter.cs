@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using WaybillsManager.Model.Data.Entitys;
+using WaybillsManager.Model.Data.Entities;
 
 namespace WaybillsManager.Converters
 {

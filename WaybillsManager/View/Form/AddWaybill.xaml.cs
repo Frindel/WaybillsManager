@@ -1,4 +1,4 @@
-﻿using WaybillsManager.Model.Data.Entitys;
+﻿using WaybillsManager.Model.Data.Entities;
 using WaybillsManager.ViewModel;
 
 namespace WaybillsManager.View.Form

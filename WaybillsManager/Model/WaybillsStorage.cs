@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using WaybillsManager.Model.Data;
-using WaybillsManager.Model.Data.Entitys;
+using WaybillsManager.Model.Data.Entities;
 
 namespace WaybillsManager.Model
 {

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WaybillsManager.Model.Data.Entitys
+namespace WaybillsManager.Model.Data.Entities
 {
 	[Table("Drivers")]
 	public class Driver

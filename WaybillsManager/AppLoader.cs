@@ -7,7 +7,7 @@ using System.Windows;
 using WaybillsManager.Model;
 using WaybillsManager.Model.Data;
 using WaybillsManager.View;
-using WaybillsManager.Model.Data.Entitys;
+using WaybillsManager.Model.Data.Entities;
 
 namespace WaybillsManager
 {

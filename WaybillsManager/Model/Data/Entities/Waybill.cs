@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WaybillsManager.Model.Data.Entitys
+namespace WaybillsManager.Model.Data.Entities
 {
 	public class Waybill
 	{
