@@ -54,26 +54,26 @@ namespace WaybillsManager.Model
 			_getHintsFuncs = new Dictionary<Type, Func<IEnumerable<string>>>();
 
 			//подпись на событие изменения путевок
-			//WaybillsStorage.Get().DataIsEdit += HintsUpdate;
+			WaybillsStorage.Get().CreateNewElement += HintsUpdate;
 		}
 
-		//private void HintsUpdate(object obj, DataEditArgs args)
-		//{
-		//	Type typeForHints = args.EditType;
+		private void HintsUpdate(object obj, NewElementArgs args)
+		{
+			Type typeForHints = args.ElementType;
 
-		//	if (!Hints.ContainsKey(typeForHints))
-		//		return;
+			if (!Hints.ContainsKey(typeForHints))
+				return;
 
-		//	// получение новых подсказок
-		//	IEnumerable<string> hints = _getHintsFuncs[typeForHints].Invoke();
+			// получение новых подсказок
+			IEnumerable<string> hints = _getHintsFuncs[typeForHints].Invoke();
 
-		//	// сохранение новых подсказок в UI потоке
-		//	Application.Current.Dispatcher.Invoke(()=>
-		//	{
-		//		Hints[typeForHints].Clear();
+			// сохранение новых подсказок в UI потоке
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				Hints[typeForHints].Clear();
 
-		//		Hints[typeForHints].AddRange(hints);
-		//	});
-		//}
+				Hints[typeForHints].AddRange(hints);
+			});
+		}
 	}
 }

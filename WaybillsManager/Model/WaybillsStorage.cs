@@ -14,7 +14,12 @@ namespace WaybillsManager.Model
 {
 	public class NewElementArgs : EventArgs
 	{
-		public Type HintsType { get; }
+		public Type ElementType { get; }
+
+		public NewElementArgs(Type elementType)
+		{
+			ElementType = elementType;
+		}
 	}
 
 	public delegate void NewElementDelegate(object obj, NewElementArgs args);
@@ -27,8 +32,6 @@ namespace WaybillsManager.Model
 
 		private Dictionary<int, IList> _pages;
 
-		private readonly Waybill _emptyWaybill;
-
 		// контекст, используемый при выполнении операций добавления/редактирования
 		private ApplicationContext _context;
 
@@ -36,13 +39,17 @@ namespace WaybillsManager.Model
 		private List<int> _pageLoaded;
 
 		private Dictionary<int, DateTime> _pageTouchTimes;
+
+		private List<Type> _newElementsType;
+
 		#region Events
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-		public event NewElementDelegate? NewWaybillElement;
+		// событие создание нового элемента путевки
+		public event NewElementDelegate? CreateNewElement;
 
 		#endregion
 
@@ -75,7 +82,6 @@ namespace WaybillsManager.Model
 				return (Waybill)_pages[pageIndex][localIndex];
 			}
 		}
-
 
 		object? IList.this[int index] { get => this[index]; set => throw new NotImplementedException(); }
 
@@ -124,6 +130,8 @@ namespace WaybillsManager.Model
 			_pageLoaded = new List<int>();
 
 			_pageTouchTimes = new Dictionary<int, DateTime>();
+
+			_newElementsType = new List<Type>();
 		}
 
 		public static WaybillsStorage Get(int pageSize = 200)
@@ -189,6 +197,9 @@ namespace WaybillsManager.Model
 			OnPropertyChanged("Item[]");
 
 			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, waybill, Count - 1));
+
+			// вызов собития добавления нового элемента путевки
+			OnNewElementsEvent();
 		}
 
 		public async Task RemoveWaybillAsync(Waybill waybill)
@@ -404,9 +415,12 @@ namespace WaybillsManager.Model
 			Car? returnedСar = _context.Cars.Where(c => c.Name == car.Name).FirstOrDefault();
 
 			if (returnedСar == null)
+			{
 				returnedСar = new Car() { Name = car.Name };
 
-			// todo: вызов события добавления подсказки
+				// добавление машины в список добавленных элементов
+				_newElementsType.Add(typeof(Car));
+			}
 
 			return returnedСar;
 		}
@@ -414,17 +428,16 @@ namespace WaybillsManager.Model
 		// создает или возвращает из БД гос. номер машины с переданными характеристиками 
 		private CarStateNumber GetOrCreateCarStateNumber(CarStateNumber carStateNumber)
 		{
-			var a = _context.CarStateNumbers.ToList();
-
-			var b = _context.CarStateNumbers.Where(csn => csn.Number == carStateNumber.Number).ToList();
-
-			var c = a[1].Number.CompareTo(carStateNumber.Number);
-
 			CarStateNumber? returnedCarStateNumber = _context.CarStateNumbers
 				.Where(csn => csn.Number.ToLower().CompareTo(carStateNumber.Number) == 0).FirstOrDefault();
 
 			if (returnedCarStateNumber == null)
+			{
 				returnedCarStateNumber = new CarStateNumber() { Number = carStateNumber.Number };
+
+				// добавление гос. номера в список добавленных элементов
+				_newElementsType.Add(typeof(CarStateNumber));
+			}
 
 			return returnedCarStateNumber;
 		}
@@ -448,9 +461,15 @@ namespace WaybillsManager.Model
 				if (returnedDriver == null)
 				{
 					returnedDriver = new Driver() { Name = identityCard.Driver.Name };
+
+					// добавление водителя в список добавленных элементов
+					_newElementsType.Add(typeof(Driver));
 				}
 
 				returnedIdentityCard.Driver = returnedDriver;
+
+				// добавление удостоверения в список добавленных элементов
+				_newElementsType.Add(typeof(IdentityCard));
 			}
 
 			return returnedIdentityCard;
@@ -470,7 +489,7 @@ namespace WaybillsManager.Model
 			{
 				returnedRoute = new Route();
 
-				RoutePoint startPoint = _context.RoutePoints.Where(rp => rp.Name == route.StartPoint.Name).FirstOrDefault();
+				RoutePoint? startPoint = _context.RoutePoints.Where(rp => rp.Name == route.StartPoint.Name).FirstOrDefault();
 
 				if (startPoint == null)
 				{
@@ -485,7 +504,7 @@ namespace WaybillsManager.Model
 					return returnedRoute;
 				}
 
-				RoutePoint endPoint = _context.RoutePoints.Where(rp => rp.Name == route.EndPoint.Name)
+				RoutePoint? endPoint = _context.RoutePoints.Where(rp => rp.Name == route.EndPoint.Name)
 					.FirstOrDefault();
 
 				if (endPoint == null)
@@ -494,9 +513,26 @@ namespace WaybillsManager.Model
 				}
 
 				returnedRoute.EndPoint = endPoint;
+
+				// добавление маршрута в список добавленных элементов
+				_newElementsType.Add(typeof(Route));
+
+				// добавление точки маршрута в список добавленных элементов
+				if (returnedRoute.StartPoint.Id==0 || returnedRoute?.EndPoint.Id==0)
+					_newElementsType.Add(typeof(IdentityCard));
 			}
 
 			return returnedRoute;
+		}
+
+		private void OnNewElementsEvent()
+		{
+			foreach (var element in _newElementsType) 
+			{
+				CreateNewElement?.Invoke(this, new NewElementArgs(element));
+			}
+
+			_newElementsType.Clear();
 		}
 
 		#endregion
