@@ -49,7 +49,7 @@ namespace WaybillsManager.ViewModel
 		{
 			get => new ActionCommand(() =>
 			{
-				string url = GetFileUrl(true, new CommonFileDialogFilter(string.Empty, "*.doc;*.docx"));
+				string url = GetFileUrl(true, new CommonFileDialogFilter(string.Empty, "*.dot;*.dotx;*.xlt;*.xltx"));
 
 				if (url != string.Empty)
 					WordTemplates.Add(OutputTemplate.GetTemplateByUrl(url));

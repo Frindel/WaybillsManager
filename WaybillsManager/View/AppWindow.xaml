@@ -37,8 +37,12 @@
 			</MenuItem>
 
 			<MenuItem Header="Вывод">
-				<MenuItem Header="В Word"/>
-				<MenuItem Header="В Excel"/>
+				<MenuItem Header="Путевка" Command="{Binding WriteWaybill}">
+					<MenuItem.CommandParameter>
+						<Binding ElementName="waybillsList" Path="SelectedValue"/>
+					</MenuItem.CommandParameter>
+				</MenuItem>
+				<MenuItem Header="Отчет"/>
 			</MenuItem>
 			<MenuItem Header="Справка">
 
@@ -62,6 +66,11 @@
 							<Binding ElementName="waybillsList" Path="SelectedValue"/>
 						</Button.CommandParameter>
 						<svg:SvgViewbox Source="pack://application:,,,/Icons/remove.svg"/>
+					</Button>
+					<Button Content="Путевка" Command="{Binding WriteWaybill}">
+						<Button.CommandParameter>
+							<Binding ElementName="waybillsList" Path="SelectedValue"/>
+						</Button.CommandParameter>
 					</Button>
 				</DockPanel>
 			</Grid>

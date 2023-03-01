@@ -70,4 +70,9 @@
 		<Setter Property="Background" Value="#0000"/>
 		<Setter Property="BorderBrush" Value="#0000"/>
 	</Style>
+	<Style TargetType="CheckBox">
+		<Setter Property="Height" Value="38"/>
+		<Setter Property="Margin" Value="3"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+	</Style>
 </ResourceDictionary>

@@ -55,6 +55,17 @@ namespace WaybillsManager.ViewModel
 			obj => obj is Waybill waybill && (!_formController.OpenForms.ContainsKey("EditWaybill") || _formController.OpenForms["EditWaybill"].Where(f => f?.Waybill.Id == waybill.Id).FirstOrDefault() == null));
 		}
 
+		public RelayCommand WriteWaybill
+		{
+			get => new RelayCommand(obj=>
+			{
+				Waybill waybill = (Waybill)obj;
+				
+				_formController.DisplayForm(new WriteWaybill(waybill));
+			},
+			obj => obj is Waybill waybill && (!_formController.OpenForms.ContainsKey("EditWaybill") || _formController.OpenForms["EditWaybill"].Where(f => f?.Waybill.Id == waybill.Id).FirstOrDefault() == null));
+		}
+
 		public AppWindowViewModel()
 		{
 			// создание контроллера форм
