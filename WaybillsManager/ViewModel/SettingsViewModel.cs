@@ -69,7 +69,7 @@ namespace WaybillsManager.ViewModel
 		{
 			get => new ActionCommand(() =>
 			{
-				string url = GetFileUrl(true, new CommonFileDialogFilter(string.Empty, ".xls"));
+				string url = GetFileUrl(true, new CommonFileDialogFilter(string.Empty, "*.dot;*.dotx;*.xlt;*.xltx"));
 
 				if (url!=string.Empty)
 					ReportTemplates.Add(OutputTemplate.GetTemplateByUrl(url));

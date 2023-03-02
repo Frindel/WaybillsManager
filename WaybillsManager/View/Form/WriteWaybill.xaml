@@ -6,7 +6,7 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WaybillsManager.View.Form"
         mc:Ignorable="d"
-        Title="Вывод путевки" Height="110" Width="250" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        Title="Формирование путевки" Height="110" Width="250" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition/>
@@ -31,11 +31,12 @@
 			</StackPanel>
 		</Grid>
 		<WrapPanel Grid.Row="1" HorizontalAlignment="Right">
-			<Button Content="Вывести" Command="{Binding WriteWaybill}">
+			<Button Content="Создать" Command="{Binding WriteWaybill}">
 				<Button.CommandParameter>
 					<Binding ElementName="templates" Path="SelectedValue"/>
 				</Button.CommandParameter>
 			</Button>
+			<Button Content="Отмена" Command="{Binding Close}"/>
 		</WrapPanel>
 	</Grid>
 </form:FormBase>

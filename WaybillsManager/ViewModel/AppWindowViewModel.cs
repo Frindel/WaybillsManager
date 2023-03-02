@@ -66,6 +66,14 @@ namespace WaybillsManager.ViewModel
 			obj => obj is Waybill waybill && (!_formController.OpenForms.ContainsKey("EditWaybill") || _formController.OpenForms["EditWaybill"].Where(f => f?.Waybill.Id == waybill.Id).FirstOrDefault() == null));
 		}
 
+		public RelayCommand Report
+		{
+			get => new RelayCommand(_=>
+			{
+				_formController.DisplayForm(new Report());
+			});
+		}
+
 		public AppWindowViewModel()
 		{
 			// создание контроллера форм

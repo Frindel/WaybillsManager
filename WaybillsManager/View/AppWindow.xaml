@@ -42,7 +42,7 @@
 						<Binding ElementName="waybillsList" Path="SelectedValue"/>
 					</MenuItem.CommandParameter>
 				</MenuItem>
-				<MenuItem Header="Отчет"/>
+				<MenuItem Header="Отчет" Command="{Binding Report}"/>
 			</MenuItem>
 			<MenuItem Header="Справка">
 

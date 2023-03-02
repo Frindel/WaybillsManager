@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Data;
 using WaybillsManager.Model.Data;
 using WaybillsManager.Model.Data.Entities;
+using System.Threading.Tasks;
 
 namespace WaybillsManager.Model.Output
 {
@@ -15,7 +17,7 @@ namespace WaybillsManager.Model.Output
 				if (writer == null)
 					return false;
 
-				writer.WriteWaybill(waybill);
+				Task.Run(()=> writer.WriteWaybill(waybill));
 
 				return true;
 			}
@@ -25,9 +27,20 @@ namespace WaybillsManager.Model.Output
 			}
 		}
 
-		public static void WriteReport()
+		public static bool WriteReport(OutputTemplate template, DateOnly startPeriod, DateOnly endPeriod)
 		{
+			try
+			{
+				Writer writer = new WriterFactory().GetWriter(template.URL);
 
+				Task.Run(() => writer.WriteReport(WaybillsStorage.Get(), startPeriod, endPeriod));
+
+				return true;
+			}
+			catch (RowNotInTableException)
+			{
+				return false;
+			}
 		}
 	}
 }

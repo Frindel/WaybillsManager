@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -46,6 +47,11 @@ namespace WaybillsManager.Model.Output
 			find.Replacement.Text = newText;
 
 			find.Execute(Replace: Word.WdReplace.wdReplaceAll);
+		}
+
+		protected override void WriteValuesColumn(string colHeader, IList values)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

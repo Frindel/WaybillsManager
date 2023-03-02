@@ -42,7 +42,7 @@
 			<GroupBox>
 				<GroupBox.Header>Шаблоны вывода отчетов</GroupBox.Header>
 				<StackPanel>
-					<ListBox x:Name="excelTemplates"  Height="120" ItemsSource="{Binding ExcelTemplates}">
+					<ListBox x:Name="excelTemplates"  Height="120" ItemsSource="{Binding ReportTemplates}">
 						<ListBox.ItemTemplate>
 							<DataTemplate>
 								<TextBlock Text="{Binding URL}"/>
@@ -55,7 +55,7 @@
 					</WrapPanel>
 					<WrapPanel>
 						<Label>Шаблон по умолчанию:</Label>
-						<ComboBox Width="150" ItemsSource="{Binding ReportTemplates}" SelectedValue="{Binding DefaultExcelTemplate}">
+						<ComboBox Width="150" ItemsSource="{Binding ReportTemplates}" SelectedValue="{Binding DefaultReportTemplate}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<TextBlock Text="{Binding FileName}"/>

@@ -39,6 +39,14 @@ namespace WaybillsManager.ViewModel
 			obj => obj is OutputTemplate);
 		}
 
+		public RelayCommand Close
+		{
+			get => new RelayCommand(_ =>
+			{
+				_closeForm();
+			});
+		}
+
 		public WriteWaybillViewModel(Action closeForm, Waybill waybill)
 		{
 			_settings = SettingsStorage.GetStorage();

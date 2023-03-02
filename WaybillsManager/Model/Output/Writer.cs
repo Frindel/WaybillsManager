@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Collections;
+using System.Linq;
 using WaybillsManager.Model.Data.Entities;
 
 namespace WaybillsManager.Model.Output
@@ -18,9 +20,6 @@ namespace WaybillsManager.Model.Output
 		{
 			// вывод номера
 			ReplaseTemplateText("[Number]", waybill.Number.ToString());
-
-			// вывод водителя
-			ReplaseTemplateText("[Driver]", waybill.IdentityCard.Driver.Name);
 
 			// вывод даты путевки
 			ReplaseTemplateText("[Date]", waybill.Date.ToString("dd MMMM yyyy", CultureInfo.GetCultureInfo("ru-RU")));
@@ -63,8 +62,24 @@ namespace WaybillsManager.Model.Output
 			ReplaseTemplateText("[BackRoute]", backRoute);
 		}
 
-		public abstract void WriteReport(IList<Waybill> waybills, DateOnly startPeriod, DateOnly endPeriod);
+		public virtual void WriteReport(IList<Waybill> waybills, DateOnly startPeriod, DateOnly endPeriod)
+		{
+			// выборка записей, находящихся в требуемом периоде
+			var suitableWaybills = waybills.Where(w => w.Date >= startPeriod && w.Date <= endPeriod).ToArray();
+
+			WriteValuesColumn("[Numbers]",suitableWaybills.Select(w=>w.Number).ToArray());
+			WriteValuesColumn("[Dates]",suitableWaybills.Select(w=>w.Date).ToArray());
+			WriteValuesColumn("[CarMaps]",suitableWaybills.Select(w=>w.Car.Name).ToArray());
+			WriteValuesColumn("[StateNumber]", suitableWaybills.Select(w=>w.CarStateNumber.Number).ToArray());
+			WriteValuesColumn("[Drivers]", suitableWaybills.Select(w => w.IdentityCard.Driver.Name).ToArray());
+			WriteValuesColumn("[IdentityCard]", suitableWaybills.Select(w=>w.IdentityCard.Number).ToArray());
+			WriteValuesColumn("[Route]", suitableWaybills
+				.Select(w => (w.Route.EndPoint == null || w.Route.EndPoint.Name == string.Empty) ?
+				w.Route.StartPoint.Name : $"{w.Route.StartPoint.Name} - {w.Route.EndPoint.Name}").ToArray());
+		}
 
 		protected abstract void ReplaseTemplateText(string oldText, string newText);
+
+		protected abstract void WriteValuesColumn(string colHeader, IList values);
 	}
 }
