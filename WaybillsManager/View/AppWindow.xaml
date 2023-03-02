@@ -133,7 +133,7 @@
 					<DataGridTextColumn Header="Номер" Width="*" Binding="{Binding Number}"/>
 					<DataGridTextColumn Header="Марка машины" Width="*" Binding="{Binding Car.Name}"/>
 					<DataGridTextColumn Header="Гос. номер" Width="*" Binding="{Binding CarStateNumber.Number}"/>
-					<DataGridTextColumn Header="ФИО шафера" Width="*" Binding="{Binding IdentityCard.Driver.Name}"/>
+					<DataGridTextColumn Header="ФИО шафера" Width="*" Binding="{Binding Driver.Name}"/>
 					<DataGridTextColumn Header="Задача" Width="*">
 						<DataGridTextColumn.Binding>
 							<Binding Path="Route">

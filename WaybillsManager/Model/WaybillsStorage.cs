@@ -166,6 +166,8 @@ namespace WaybillsManager.Model
 							waybill.CarStateNumber = GetOrCreateCarStateNumber(waybill.CarStateNumber);
 
 							waybill.IdentityCard = GetOrCreateIdntityCard(waybill.IdentityCard);
+							
+							waybill.Driver = GetOrCreateDriver(waybill.Driver);
 
 							waybill.Route = GetOrCreateRoute(waybill.Route);
 
@@ -225,6 +227,8 @@ namespace WaybillsManager.Model
 							waybill.CarStateNumber = GetOrCreateCarStateNumber(waybill.CarStateNumber);
 
 							waybill.IdentityCard = GetOrCreateIdntityCard(waybill.IdentityCard);
+
+							waybill.Driver = GetOrCreateDriver(waybill.Driver);
 
 							waybill.Route = GetOrCreateRoute(waybill.Route);
 
@@ -440,7 +444,7 @@ namespace WaybillsManager.Model
 
 				return context.Waybills.OrderBy(w => w.Date).ThenBy(w => w.Number).Skip(pageIndex * PageSize).Take(PageSize)
 					.Include(w => w.IdentityCard)
-						.ThenInclude(ic => ic.Driver)
+					.Include(w=>w.Driver)
 					.Include(w => w.CarStateNumber)
 					.Include(w => w.Car)
 					.Include(w => w.Route)
@@ -489,38 +493,38 @@ namespace WaybillsManager.Model
 			{
 				returnedCarStateNumber = new CarStateNumber() { Number = carStateNumber.Number };
 
-				// добавление гос. номера в список добавленных элементов
-				_newElementsType.Add(typeof(CarStateNumber));
+				// добавление водителя в список добавленных элементов
+				_newElementsType.Add(typeof(Driver));
 			}
 
 			return returnedCarStateNumber;
 		}
 
+		// создает или возвращает из БД гос. водителя с переданными характеристиками 
+		private Driver GetOrCreateDriver (Driver driver)
+		{
+			Driver returnedDriver = _context.Drivers.Where(d=>d.Name == driver.Name).FirstOrDefault();
+
+			if (returnedDriver ==null)
+			{
+				returnedDriver = new Driver() { Name = driver.Name };
+
+				// добавление водителя в список добавленных элементов
+				_newElementsType.Add(typeof(Driver));
+			}
+
+			return returnedDriver;
+		}
+
 		// создает или возвращает из БД гос. удостоверение и информацию о водителе с переданными характеристиками 
 		private IdentityCard GetOrCreateIdntityCard(IdentityCard identityCard)
 		{
-			IdentityCard? returnedIdentityCard = _context.IdentityCards
-				.Include(ic => ic.Driver)
-				.Where(ic => ic.Number == identityCard.Number)
+			IdentityCard? returnedIdentityCard = _context.IdentityCards.Where(ic => ic.Number == identityCard.Number)
 				.FirstOrDefault();
 
 			if (returnedIdentityCard == null)
 			{
 				returnedIdentityCard = new IdentityCard() { Number = identityCard.Number };
-
-				Driver? returnedDriver = _context.Drivers
-					.Where(d => d.Name == identityCard.Driver.Name)
-					.FirstOrDefault();
-
-				if (returnedDriver == null)
-				{
-					returnedDriver = new Driver() { Name = identityCard.Driver.Name };
-
-					// добавление водителя в список добавленных элементов
-					_newElementsType.Add(typeof(Driver));
-				}
-
-				returnedIdentityCard.Driver = returnedDriver;
 
 				// добавление удостоверения в список добавленных элементов
 				_newElementsType.Add(typeof(IdentityCard));

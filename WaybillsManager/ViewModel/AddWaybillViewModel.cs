@@ -69,10 +69,8 @@ namespace WaybillsManager.ViewModel
 
 			waybill.CarStateNumber = new CarStateNumber();
 			waybill.Car = new Car();
-			waybill.IdentityCard = new IdentityCard()
-			{
-				Driver = new Driver()
-			};
+			waybill.IdentityCard = new IdentityCard();
+			waybill.Driver = new Driver();
 			waybill.Route = new Route()
 			{
 				StartPoint = new RoutePoint(),

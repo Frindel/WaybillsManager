@@ -46,7 +46,7 @@ namespace WaybillsManager.Model.Output
 			ReplaseTemplateText("[StateNumber]", waybill.CarStateNumber.Number);
 
 			// вывод ФИО водителя
-			ReplaseTemplateText("[Driver]", waybill.IdentityCard.Driver.Name);
+			ReplaseTemplateText("[Driver]", waybill.Driver.Name);
 
 			// вывод удостоверения водителя
 			ReplaseTemplateText("[IdentityCard]", waybill.IdentityCard.Number);
@@ -71,7 +71,7 @@ namespace WaybillsManager.Model.Output
 			WriteValuesColumn("[Dates]",suitableWaybills.Select(w=>w.Date).ToArray());
 			WriteValuesColumn("[CarMaps]",suitableWaybills.Select(w=>w.Car.Name).ToArray());
 			WriteValuesColumn("[StateNumber]", suitableWaybills.Select(w=>w.CarStateNumber.Number).ToArray());
-			WriteValuesColumn("[Drivers]", suitableWaybills.Select(w => w.IdentityCard.Driver.Name).ToArray());
+			WriteValuesColumn("[Drivers]", suitableWaybills.Select(w => w.Driver.Name).ToArray());
 			WriteValuesColumn("[IdentityCard]", suitableWaybills.Select(w=>w.IdentityCard.Number).ToArray());
 			WriteValuesColumn("[Route]", suitableWaybills
 				.Select(w => (w.Route.EndPoint == null || w.Route.EndPoint.Name == string.Empty) ?

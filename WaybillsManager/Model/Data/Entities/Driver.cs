@@ -13,8 +13,6 @@ namespace WaybillsManager.Model.Data.Entities
 		[MaxLength(48)]
 		public string Name { get; set; }
 
-		public List<IdentityCard> IdentityCards { get; set; }
-
 		public object Clone ()
 		{
 			return new Driver()

@@ -18,6 +18,8 @@ namespace WaybillsManager.Model.Data.Entities
 
 		public Route Route { get; set; }
 
+		public Driver Driver { get; set; }
+
 		public object Clone()
 		{
 			return new Waybill()
@@ -25,7 +27,8 @@ namespace WaybillsManager.Model.Data.Entities
 				Id = Id,
 				Date = Date,
 				Number = Number,
-				IdentityCard= (IdentityCard)IdentityCard.Clone(),
+				IdentityCard = (IdentityCard)IdentityCard.Clone(),
+				Driver = (Driver)Driver.Clone(),
 				CarStateNumber = (CarStateNumber)CarStateNumber.Clone(),
 				Car = (Car)Car.Clone(),
 				Route = (Route)Route.Clone()

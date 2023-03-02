@@ -33,7 +33,8 @@ namespace WaybillsManager.Model.Output
 			{
 				Writer writer = new WriterFactory().GetWriter(template.URL);
 
-				Task.Run(() => writer.WriteReport(WaybillsStorage.Get(), startPeriod, endPeriod));
+				Task.Run(()=>
+				writer.WriteReport(WaybillsStorage.Get(), startPeriod, endPeriod));
 
 				return true;
 			}

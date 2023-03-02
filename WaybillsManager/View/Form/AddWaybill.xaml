@@ -83,7 +83,7 @@
 				<!--ФИО шафера-->
 				<controls:TextBoxHints x:Name="driverName" Variants="{Binding DriverNames}">
 					<controls:TextBoxHints.Text>
-						<Binding Path="Waybill.IdentityCard.Driver.Name">
+						<Binding Path="Waybill.Driver.Name">
 							<Binding.ValidationRules>
 								<validations:StringNotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
 							</Binding.ValidationRules>

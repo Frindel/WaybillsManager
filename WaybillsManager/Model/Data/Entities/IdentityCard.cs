@@ -9,8 +9,6 @@ namespace WaybillsManager.Model.Data.Entities
 	{
 		public int Id { get; set; }
 
-		public Driver Driver { get; set; }
-
 		[MaxLength(32)]
 		public string Number { get; set; }
 
@@ -19,8 +17,7 @@ namespace WaybillsManager.Model.Data.Entities
 			return new IdentityCard()
 			{
 				Id = Id,
-				Number = Number,
-				Driver = (Driver)Driver.Clone()
+				Number = Number
 			};
 		}
 	}
