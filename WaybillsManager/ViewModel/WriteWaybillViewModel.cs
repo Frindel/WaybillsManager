@@ -18,9 +18,9 @@ namespace WaybillsManager.ViewModel
 
 		private Waybill _writingWaybill;
 
-		public ObservableCollection<OutputTemplate> Templates { get => _settings.WordTemplates; }
+		public ObservableCollection<OutputTemplate> Templates { get => _settings.WaybillTemplates; }
 
-		public OutputTemplate DefaultWaybillTemplate { get=> _settings.DefaultWordTemplate; }
+		public OutputTemplate DefaultWaybillTemplate { get=> _settings.DefaultWaybillTemplate; }
 
 		public RelayCommand WriteWaybill
 		{

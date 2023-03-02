@@ -18,13 +18,13 @@ namespace WaybillsManager.ViewModel
 		#region Propertys
 		public string DbDirectory { get => _settings.DbDirectory; set => _settings.DbDirectory = value; }
 
-		public ObservableCollection<OutputTemplate> WordTemplates { get => _settings.WordTemplates; }
+		public ObservableCollection<OutputTemplate> WaybillTemplates { get => _settings.WaybillTemplates; }
 
-		public ObservableCollection<OutputTemplate> ExcelTemplates { get => _settings.ExcelTemplates; }
+		public ObservableCollection<OutputTemplate> ReportTemplates { get => _settings.ReportTemplates; }
 
-		public OutputTemplate DefaultWordTemplate { get => _settings.DefaultWordTemplate; set => _settings.DefaultWordTemplate = value; }
+		public OutputTemplate DefaultWaybillTemplate { get => _settings.DefaultWaybillTemplate; set => _settings.DefaultWaybillTemplate = value; }
 
-		public OutputTemplate DefaultExcelTemplate { get => _settings.DefaultExcelTemplate; set => _settings.DefaultExcelTemplate = value; }
+		public OutputTemplate DefaultReportTemplate { get => _settings.DefaultReportTemplate; set => _settings.DefaultReportTemplate = value; }
 		#endregion
 
 		#region Commands
@@ -45,42 +45,42 @@ namespace WaybillsManager.ViewModel
 			});
 		}
 
-		public ActionCommand AddWordTemplate
+		public ActionCommand AddWaybillTemplate
 		{
 			get => new ActionCommand(() =>
 			{
 				string url = GetFileUrl(true, new CommonFileDialogFilter(string.Empty, "*.dot;*.dotx;*.xlt;*.xltx"));
 
 				if (url != string.Empty)
-					WordTemplates.Add(OutputTemplate.GetTemplateByUrl(url));
+					WaybillTemplates.Add(OutputTemplate.GetTemplateByUrl(url));
 			});
 		}
 
-		public RelayCommand RemoveWordTeemplate
+		public RelayCommand RemoveWaybillTeemplate
 		{
 			get => new RelayCommand(template =>
 			{
-				WordTemplates.Remove((OutputTemplate)template);
+				WaybillTemplates.Remove((OutputTemplate)template);
 			},
 			validationValue => validationValue is OutputTemplate);
 		}
 
-		public ActionCommand AddExcelTemplate
+		public ActionCommand AddReportTemplate
 		{
 			get => new ActionCommand(() =>
 			{
 				string url = GetFileUrl(true, new CommonFileDialogFilter(string.Empty, ".xls"));
 
 				if (url!=string.Empty)
-					ExcelTemplates.Add(OutputTemplate.GetTemplateByUrl(url));
+					ReportTemplates.Add(OutputTemplate.GetTemplateByUrl(url));
 			});
 		}
 
-		public RelayCommand RemoveExcelTeemplate
+		public RelayCommand RemoveReportTeemplate
 		{
 			get => new RelayCommand(template =>
 			{
-				ExcelTemplates.Remove((OutputTemplate)template);
+				ReportTemplates.Remove((OutputTemplate)template);
 			},
 			validationValue => validationValue is OutputTemplate);
 		}
@@ -106,11 +106,11 @@ namespace WaybillsManager.ViewModel
 			// Уведомление представления при изменении значений в моделе
 			_settings.PropertyChanged += (_, e) =>
 			{
-				if (e.PropertyName == nameof(_settings.DefaultWordTemplate))
-					RaisePropertyChanged(nameof(DefaultWordTemplate));
+				if (e.PropertyName == nameof(_settings.DefaultWaybillTemplate))
+					RaisePropertyChanged(nameof(DefaultWaybillTemplate));
 
-				if (e.PropertyName == nameof(_settings.DefaultExcelTemplate))
-					RaisePropertyChanged(nameof(DefaultExcelTemplate));
+				if (e.PropertyName == nameof(_settings.DefaultReportTemplate))
+					RaisePropertyChanged(nameof(DefaultReportTemplate));
 
 				if (e.PropertyName == nameof(_settings.DbDirectory))
 					RaisePropertyChanged(nameof(DbDirectory));

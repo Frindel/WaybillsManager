@@ -25,47 +25,47 @@ namespace WaybillsManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection WordTemplates {
+        public global::System.Collections.Specialized.StringCollection WaybillTemplates {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["WordTemplates"]));
+                return ((global::System.Collections.Specialized.StringCollection)(this["WaybillTemplates"]));
             }
             set {
-                this["WordTemplates"] = value;
+                this["WaybillTemplates"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection ExcelTemplates {
+        public global::System.Collections.Specialized.StringCollection ReportTemplates {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["ExcelTemplates"]));
+                return ((global::System.Collections.Specialized.StringCollection)(this["ReportTemplates"]));
             }
             set {
-                this["ExcelTemplates"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string DefaultWordTemplate {
-            get {
-                return ((string)(this["DefaultWordTemplate"]));
-            }
-            set {
-                this["DefaultWordTemplate"] = value;
+                this["ReportTemplates"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string DefaultExcelTemplate {
+        public string DefaultWaybillTemplate {
             get {
-                return ((string)(this["DefaultExcelTemplate"]));
+                return ((string)(this["DefaultWaybillTemplate"]));
             }
             set {
-                this["DefaultExcelTemplate"] = value;
+                this["DefaultWaybillTemplate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DefaultReportTemplate {
+            get {
+                return ((string)(this["DefaultReportTemplate"]));
+            }
+            set {
+                this["DefaultReportTemplate"] = value;
             }
         }
         

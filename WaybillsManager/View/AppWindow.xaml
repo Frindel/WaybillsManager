@@ -67,10 +67,11 @@
 						</Button.CommandParameter>
 						<svg:SvgViewbox Source="pack://application:,,,/Icons/remove.svg"/>
 					</Button>
-					<Button Content="Путевка" Command="{Binding WriteWaybill}">
+					<Button Style="{StaticResource actionButton}" Command="{Binding WriteWaybill}">
 						<Button.CommandParameter>
 							<Binding ElementName="waybillsList" Path="SelectedValue"/>
 						</Button.CommandParameter>
+						<svg:SvgViewbox Source="pack://application:,,,/Icons/print.svg"/>
 					</Button>
 				</DockPanel>
 			</Grid>

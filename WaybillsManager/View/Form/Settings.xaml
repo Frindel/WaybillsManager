@@ -14,7 +14,7 @@
 		</Grid.RowDefinitions>
 		<StackPanel Grid.Row="0">
 			<GroupBox>
-				<GroupBox.Header>Шаблоны вывода Word</GroupBox.Header>
+				<GroupBox.Header>Шаблоны вывода путевок</GroupBox.Header>
 				<StackPanel>
 					<ListBox x:Name="wordTemplates" Height="120" ItemsSource="{Binding WordTemplates}">
 						<ListBox.ItemTemplate>
@@ -40,7 +40,7 @@
 				</StackPanel>
 			</GroupBox>
 			<GroupBox>
-				<GroupBox.Header>Шаблоны вывода Excel</GroupBox.Header>
+				<GroupBox.Header>Шаблоны вывода отчетов</GroupBox.Header>
 				<StackPanel>
 					<ListBox x:Name="excelTemplates"  Height="120" ItemsSource="{Binding ExcelTemplates}">
 						<ListBox.ItemTemplate>

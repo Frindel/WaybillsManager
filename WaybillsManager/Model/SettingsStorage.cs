@@ -16,8 +16,8 @@ namespace WaybillsManager.Model
 
 		private Settings _settings;
 
-		private OutputTemplate _defaultWordTemplate;
-		private OutputTemplate _defaultExcelTemplate;
+		private OutputTemplate _defaultWaybillTemplate;
+		private OutputTemplate _defaultReportTemplate;
 
 		#region Propertys
 
@@ -31,29 +31,29 @@ namespace WaybillsManager.Model
 			}
 		}
 
-		public OutputTemplate DefaultWordTemplate
+		public OutputTemplate DefaultWaybillTemplate
 		{
-			get => _defaultWordTemplate;
+			get => _defaultWaybillTemplate;
 			set
 			{
-				_defaultWordTemplate = value;
-				RaisePropertyChanged(nameof(DefaultWordTemplate));
+				_defaultWaybillTemplate = value;
+				RaisePropertyChanged(nameof(DefaultWaybillTemplate));
 			}
 		}
 
-		public OutputTemplate DefaultExcelTemplate
+		public OutputTemplate DefaultReportTemplate
 		{
-			get => _defaultExcelTemplate;
+			get => _defaultReportTemplate;
 			set
 			{
-				_defaultExcelTemplate = value;
-				RaisePropertyChanged(nameof(DefaultExcelTemplate));
+				_defaultReportTemplate = value;
+				RaisePropertyChanged(nameof(DefaultReportTemplate));
 			}
 		}
 
-		public ObservableCollection<OutputTemplate> ExcelTemplates { get; }
+		public ObservableCollection<OutputTemplate> ReportTemplates { get; }
 
-		public ObservableCollection<OutputTemplate> WordTemplates { get; }
+		public ObservableCollection<OutputTemplate> WaybillTemplates { get; }
 
 		#endregion
 
@@ -63,24 +63,24 @@ namespace WaybillsManager.Model
 		{
 			_settings = Settings.Default;
 
-			ExcelTemplates = GetOutputTemplatesCollection(_settings.ExcelTemplates);
-			WordTemplates = GetOutputTemplatesCollection(_settings.WordTemplates);
+			ReportTemplates = GetOutputTemplatesCollection(_settings.ReportTemplates);
+			WaybillTemplates = GetOutputTemplatesCollection(_settings.WaybillTemplates);
 
-			DefaultExcelTemplate = ExcelTemplates.Where(t => t.URL == _settings.DefaultExcelTemplate).FirstOrDefault();
-			DefaultWordTemplate = WordTemplates.Where(t => t.URL == _settings.DefaultWordTemplate).FirstOrDefault();
+			DefaultReportTemplate = ReportTemplates.Where(t => t.URL == _settings.DefaultReportTemplate).FirstOrDefault();
+			DefaultWaybillTemplate = WaybillTemplates.Where(t => t.URL == _settings.DefaultWaybillTemplate).FirstOrDefault();
 
-			//удаление шаблона по умолчанию для Excel при его удалении из коллекции шаблонов 
-			ExcelTemplates.CollectionChanged += (_, e) =>
+			//удаление шаблона по умолчанию для Report при его удалении из коллекции шаблонов 
+			ReportTemplates.CollectionChanged += (_, e) =>
 			{
-				if (e.Action == NotifyCollectionChangedAction.Remove && DefaultExcelTemplate != null && !ExcelTemplates.Contains(DefaultExcelTemplate))
-					DefaultExcelTemplate = null;
+				if (e.Action == NotifyCollectionChangedAction.Remove && DefaultReportTemplate != null && !ReportTemplates.Contains(DefaultReportTemplate))
+					DefaultReportTemplate = null;
 			};
 
-			//удаление шаблона по умолчанию для Word при его удалении из коллекции шаблонов 
-			WordTemplates.CollectionChanged += (_, e) =>
+			//удаление шаблона по умолчанию для Waybill при его удалении из коллекции шаблонов 
+			WaybillTemplates.CollectionChanged += (_, e) =>
 			{
-				if (e.Action == NotifyCollectionChangedAction.Remove && DefaultWordTemplate != null && !WordTemplates.Contains(DefaultWordTemplate))
-					DefaultWordTemplate = null;
+				if (e.Action == NotifyCollectionChangedAction.Remove && DefaultWaybillTemplate != null && !WaybillTemplates.Contains(DefaultWaybillTemplate))
+					DefaultWaybillTemplate = null;
 			};
 		}
 
@@ -95,16 +95,16 @@ namespace WaybillsManager.Model
 
 		public void Save()
 		{
-			_settings.DefaultExcelTemplate = DefaultExcelTemplate?.URL ?? string.Empty;
-			_settings.DefaultWordTemplate = DefaultWordTemplate?.URL ?? string.Empty;
+			_settings.DefaultReportTemplate = DefaultReportTemplate?.URL ?? string.Empty;
+			_settings.DefaultWaybillTemplate = DefaultWaybillTemplate?.URL ?? string.Empty;
 
-			//перезапись шаблонов для вывода в Excel
-			_settings.ExcelTemplates = new StringCollection();
-			_settings.ExcelTemplates.AddRange(ExcelTemplates.Select(t => t.URL).ToArray());
+			//перезапись шаблонов для вывода в Report
+			_settings.ReportTemplates = new StringCollection();
+			_settings.ReportTemplates.AddRange(ReportTemplates.Select(t => t.URL).ToArray());
 
-			//перезапись шаблонов для вывода в Word
-			_settings.WordTemplates = new StringCollection();
-			_settings.WordTemplates.AddRange(WordTemplates.Select(t => t.URL).ToArray());
+			//перезапись шаблонов для вывода в Waybill
+			_settings.WaybillTemplates = new StringCollection();
+			_settings.WaybillTemplates.AddRange(WaybillTemplates.Select(t => t.URL).ToArray());
 
 			_settings.Save();
 		}
@@ -134,7 +134,7 @@ namespace WaybillsManager.Model
 				//удаление шаблона в случае его отсутствия по url или отсутствии необходимых закладок в нем
 				if (template == null)
 				{
-					_settings.ExcelTemplates.Remove(url);
+					_settings.ReportTemplates.Remove(url);
 					hasMissingTemplate = true;
 					continue;
 				}

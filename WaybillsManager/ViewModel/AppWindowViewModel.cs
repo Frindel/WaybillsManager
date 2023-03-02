@@ -47,7 +47,7 @@ namespace WaybillsManager.ViewModel
 			{
 				// todo: проверка отсутствия открытых форм редактирования для удаляемой путевки
 
-				if (MessageBox.Show("Вы уверены, что хотите удалить путевку?", "Удаление путевки", MessageBoxButton.YesNo) == MessageBoxResult.No)
+				if (MessageBox.Show("Вы действительно хотите удалить путевку?", "Удаление путевки", MessageBoxButton.YesNo) == MessageBoxResult.No)
 					return;
 
 				Storage.RemoveWaybillAsync(waybill as Waybill);

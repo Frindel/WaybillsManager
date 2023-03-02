@@ -43,6 +43,8 @@ namespace WaybillsManager.Model.Output
 
 			app.DisplayFullScreen = false;
 			app.WindowState = Excel.XlWindowState.xlMaximized;
+
+
 		}
 
 		protected override void ReplaseTemplateText(string oldText, string newText)

@@ -14,6 +14,8 @@
     <None Remove="Icons\edit.svg" />
     <None Remove="Icons\EditImg.png" />
     <None Remove="Icons\incon.ico" />
+    <None Remove="Icons\print-printer-tool-with-printed-paper-outlined-symbol_icon-icons.com_57772.svg" />
+    <None Remove="Icons\print.svg" />
     <None Remove="Icons\PrintImg.png" />
     <None Remove="Icons\remove.svg" />
     <None Remove="Icons\SearchIcon.png" />
@@ -70,16 +72,10 @@
     <Resource Include="Icons\edit.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Icons\incon.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\PrintImg.png">
+    <Resource Include="Icons\print.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\remove.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\SearchIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
