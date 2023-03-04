@@ -20,6 +20,7 @@
 		<Menu>
 			<MenuItem Header="Файл">
 				<MenuItem Header="Настройки" Command="{Binding OpenSettings}"></MenuItem>
+				<MenuItem Header="Выгрузить базу данных" Command="{Binding UploadDb}"/>
 				<Separator/>
 				<MenuItem Header="Выход"></MenuItem>
 			</MenuItem>
@@ -46,9 +47,7 @@
 				</MenuItem>
 				<MenuItem Header="Отчет" Command="{Binding Report}"/>
 			</MenuItem>
-			<MenuItem Header="Справка">
-
-			</MenuItem>
+			<MenuItem Header="Справка" Command="{Binding OpenReference}"/>
 		</Menu>
 		<GroupBox Grid.Row="1">
 			<GroupBox.Header>Действия</GroupBox.Header>
@@ -113,7 +112,7 @@
 							<Label>Номер</Label>
 							<Label>Марка машины</Label>
 							<Label>Гос. номер</Label>
-							<Label>ФИО шафера</Label>
+							<Label>ФИО шофера</Label>
 							<Label>Задача</Label>
 						</StackPanel>
 						<StackPanel Grid.Column="1">
@@ -167,7 +166,7 @@
 					<DataGridTextColumn Header="Номер" Width="0.35*" Binding="{Binding Number}"/>
 					<DataGridTextColumn Header="Марка машины" Width="*" Binding="{Binding Car.Name}"/>
 					<DataGridTextColumn Header="Гос. номер" Width="0.5*" Binding="{Binding CarStateNumber.Number}"/>
-					<DataGridTextColumn Header="ФИО шафера" Width="*" Binding="{Binding Driver.Name}"/>
+					<DataGridTextColumn Header="ФИО шофера" Width="*" Binding="{Binding Driver.Name}"/>
 					<DataGridTextColumn Header="Задача" Width="*">
 						<DataGridTextColumn.Binding>
 							<Binding Path="Route">

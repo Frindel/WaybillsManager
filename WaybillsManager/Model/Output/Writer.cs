@@ -70,10 +70,10 @@ namespace WaybillsManager.Model.Output
 			WriteValuesColumn("[Numbers]",suitableWaybills.Select(w=>w.Number).ToArray());
 			WriteValuesColumn("[Dates]",suitableWaybills.Select(w=>w.Date).ToArray());
 			WriteValuesColumn("[CarMaps]",suitableWaybills.Select(w=>w.Car.Name).ToArray());
-			WriteValuesColumn("[StateNumber]", suitableWaybills.Select(w=>w.CarStateNumber.Number).ToArray());
+			WriteValuesColumn("[StateNumbers]", suitableWaybills.Select(w=>w.CarStateNumber.Number).ToArray());
 			WriteValuesColumn("[Drivers]", suitableWaybills.Select(w => w.Driver.Name).ToArray());
-			WriteValuesColumn("[IdentityCard]", suitableWaybills.Select(w=>w.IdentityCard.Number).ToArray());
-			WriteValuesColumn("[Route]", suitableWaybills
+			WriteValuesColumn("[IdentityCards]", suitableWaybills.Select(w=>w.IdentityCard.Number).ToArray());
+			WriteValuesColumn("[Routes]", suitableWaybills
 				.Select(w => (w.Route.EndPoint == null || w.Route.EndPoint.Name == string.Empty) ?
 				w.Route.StartPoint.Name : $"{w.Route.StartPoint.Name} - {w.Route.EndPoint.Name}").ToArray());
 		}

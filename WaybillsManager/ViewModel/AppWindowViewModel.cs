@@ -1,14 +1,15 @@
-﻿using Prism.Mvvm;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using Prism.Mvvm;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using WaybillsManager.Model;
 using WaybillsManager.Model.Data;
 using WaybillsManager.Model.Data.Entities;
+using WaybillsManager.Model.Output;
 using WaybillsManager.View;
 using WaybillsManager.View.Form;
 
@@ -47,6 +48,34 @@ namespace WaybillsManager.ViewModel
 		#endregion
 
 		#region Commands
+
+		public RelayCommand UploadDb
+		{
+			get => new RelayCommand(_ =>
+			{
+				string url = GetFileUrl(false);
+
+				if (url != string.Empty)
+					OutputOperations.UploadDb(url);
+			});
+		}
+
+		public RelayCommand OpenReference
+		{
+			get => new RelayCommand(_ =>
+			{
+				try
+				{
+					System.Diagnostics.Process txt = new System.Diagnostics.Process();
+					txt.StartInfo.FileName = "notepad.exe";
+					txt.StartInfo.Arguments = $"{Environment.CurrentDirectory}\\Reference.txt";
+					txt.Start();
+				}
+				catch (Exception e) 
+				{ }
+			});
+
+		}
 
 		public RelayCommand OpenSettings
 		{
@@ -92,10 +121,10 @@ namespace WaybillsManager.ViewModel
 
 		public RelayCommand WriteWaybill
 		{
-			get => new RelayCommand(obj=>
+			get => new RelayCommand(obj =>
 			{
 				Waybill waybill = (Waybill)obj;
-				
+
 				_formController.DisplayForm(new WriteWaybill(waybill));
 			},
 			obj => obj is Waybill waybill && (!_formController.OpenForms.ContainsKey("EditWaybill") || _formController.OpenForms["EditWaybill"].Where(f => f?.Waybill.Id == waybill.Id).FirstOrDefault() == null));
@@ -103,7 +132,7 @@ namespace WaybillsManager.ViewModel
 
 		public RelayCommand Search
 		{
-			get => new RelayCommand(_=>
+			get => new RelayCommand(_ =>
 			{
 				Searcher.Search(Storage, _searchFormValues);
 			});
@@ -111,17 +140,17 @@ namespace WaybillsManager.ViewModel
 
 		public RelayCommand CancelSort
 		{
-			get => new RelayCommand(_=>
+			get => new RelayCommand(_ =>
 			{
 				Searcher.Cancel(Storage);
 				CleanSearchForm();
 			},
-			_=> CollectionViewSource.GetDefaultView(Storage).Filter!=null);
+			_ => CollectionViewSource.GetDefaultView(Storage).Filter != null);
 		}
 
 		public RelayCommand Report
 		{
-			get => new RelayCommand(_=>
+			get => new RelayCommand(_ =>
 			{
 				_formController.DisplayForm(new Report());
 			});
@@ -156,6 +185,27 @@ namespace WaybillsManager.ViewModel
 		private void CleanSearchForm()
 		{
 			SearchFormValue = new SearchFormValues();
+		}
+
+		//возвращает файл/папку выбранные в проводнике Windows
+		private string GetFileUrl(bool isFile, CommonFileDialogFilter filter = null)
+		{
+			CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+
+			if (!isFile)
+				dialog.IsFolderPicker = true;
+
+			if (isFile && filter != null)
+				dialog.Filters.Add(filter);
+
+			CommonFileDialogResult dialogResult = dialog.ShowDialog();
+
+			string url = string.Empty;
+
+			if (dialogResult == CommonFileDialogResult.Ok)
+				url = dialog.FileName;
+
+			return url;
 		}
 	}
 }

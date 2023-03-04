@@ -25,7 +25,7 @@
 				<Label>Дата</Label>
 				<Label>Марка машины</Label>
 				<Label>Гос. номер</Label>
-				<Label>ФИО шафера</Label>
+				<Label>ФИО шофера</Label>
 				<Label>Удостоверение №</Label>
 				<Label>Задание</Label>
 			</StackPanel>
