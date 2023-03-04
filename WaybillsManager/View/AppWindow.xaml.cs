@@ -28,5 +28,11 @@ namespace WaybillsManager
 				}
 			};
 		}
-	}
+
+		private void DisplaySort(object sender, RoutedEventArgs e)
+		{
+			sortForm.Width = (sortForm.Width == 0) ? 230 : 0;
+			
+        }
+    }
 }

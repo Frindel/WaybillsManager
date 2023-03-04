@@ -47,7 +47,7 @@
 				<!--Дата-->
 				<DatePicker x:Name="date">
 					<DatePicker.Text>
-						<Binding Path="Waybill.Date" UpdateSourceTrigger="PropertyChanged">
+						<Binding Path="Waybill.Date" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay">
 							<Binding.Converter>
 								<converters:DateOnlyConverter/>
 							</Binding.Converter>

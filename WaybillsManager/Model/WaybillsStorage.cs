@@ -28,6 +28,7 @@ namespace WaybillsManager.Model
 
 	public class WaybillsStorage : IList<Waybill>, IList, INotifyPropertyChanged, INotifyCollectionChanged
 	{
+
 		private static WaybillsStorage _storage;
 
 		private int _count = -1;
@@ -56,6 +57,8 @@ namespace WaybillsManager.Model
 		#endregion
 
 		#region Indexer
+
+		public ObservableCollection<int> WaybillsPeriods { get; } = new ObservableCollection<int>();
 
 		public Waybill this[int index]
 		{
@@ -134,6 +137,8 @@ namespace WaybillsManager.Model
 			_pageTouchTimes = new Dictionary<int, DateTime>();
 
 			_newElementsType = new List<Type>();
+
+			UpdatePeriods();
 		}
 
 		public static WaybillsStorage Get(int pageSize = 200)
@@ -204,6 +209,8 @@ namespace WaybillsManager.Model
 
 			// вызов собития добавления нового элемента путевки
 			OnNewElementsEvent();
+
+			UpdatePeriods();
 		}
 
 		public async Task EditWaybilllAsync(Waybill waybill)
@@ -258,6 +265,8 @@ namespace WaybillsManager.Model
 
 			// вызов собития добавления нового элемента путевки
 			OnNewElementsEvent();
+
+			UpdatePeriods();
 		}
 
 		public async Task RemoveWaybillAsync(Waybill waybill)
@@ -278,6 +287,8 @@ namespace WaybillsManager.Model
 			Count--;
 			OnPropertyChanged("Item[]");
 			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, waybill, index));
+
+			UpdatePeriods();
 		}
 		#endregion
 
@@ -318,9 +329,10 @@ namespace WaybillsManager.Model
 
 			using (ApplicationContext context = new ApplicationContext())
 			{
-				return context.Waybills
+				var a = context.Waybills
 					.Where(w => w.Number == item.Number && w.Date.Year == item.Date.Year)
-					.FirstOrDefault() != null;
+					.FirstOrDefault();
+				return a != null;
 			}
 		}
 
@@ -457,7 +469,8 @@ namespace WaybillsManager.Model
 
 		private void CleanUpPages()
 		{
-			foreach (int pageNumber in _pageTouchTimes.Keys)
+			int[] keys = _pageTouchTimes.Keys.ToArray();
+			foreach (int pageNumber in keys)
 			{
 				if ((DateTime.Now - _pageTouchTimes[pageNumber]).TotalSeconds > 5)
 				{
@@ -593,6 +606,13 @@ namespace WaybillsManager.Model
 			_newElementsType.Clear();
 		}
 
+		private void UpdatePeriods()
+		{
+			WaybillsPeriods.Clear();
+
+			using (ApplicationContext context = new ApplicationContext())
+				WaybillsPeriods.AddRange(context.Waybills.Select(w => w.Date.Year).OrderBy(y => y).Distinct().ToArray());
+		}
 		#endregion
 	}
 }
