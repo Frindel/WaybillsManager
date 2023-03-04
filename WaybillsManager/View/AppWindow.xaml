@@ -147,7 +147,7 @@
 					</Grid>
 					<WrapPanel HorizontalAlignment="Right" Grid.Row="1">
 						<Button Command="{Binding Search}">Найти</Button>
-						<Button Command="{Binding CancelSort}">Назад</Button>
+						<Button Command="{Binding CancelSort}">Очистить</Button>
 					</WrapPanel>
 				</Grid>
 			</Grid>
@@ -163,10 +163,10 @@
 					</i:EventTrigger>
 				</i:Interaction.Triggers>
 				<DataGrid.Columns>
-					<DataGridTextColumn Header="Дата" Width="*" Binding="{Binding Date}"/>
-					<DataGridTextColumn Header="Номер" Width="*" Binding="{Binding Number}"/>
+					<DataGridTextColumn Header="Дата" Width="0.35*" Binding="{Binding Date}"/>
+					<DataGridTextColumn Header="Номер" Width="0.35*" Binding="{Binding Number}"/>
 					<DataGridTextColumn Header="Марка машины" Width="*" Binding="{Binding Car.Name}"/>
-					<DataGridTextColumn Header="Гос. номер" Width="*" Binding="{Binding CarStateNumber.Number}"/>
+					<DataGridTextColumn Header="Гос. номер" Width="0.5*" Binding="{Binding CarStateNumber.Number}"/>
 					<DataGridTextColumn Header="ФИО шафера" Width="*" Binding="{Binding Driver.Name}"/>
 					<DataGridTextColumn Header="Задача" Width="*">
 						<DataGridTextColumn.Binding>

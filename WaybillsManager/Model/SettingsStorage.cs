@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using WaybillsManager.Model.Data;
 using WaybillsManager.Properties;
 using System.IO;
+using System.Windows;
+using System;
+using System.Reflection;
 
 namespace WaybillsManager.Model
 {
@@ -18,6 +21,8 @@ namespace WaybillsManager.Model
 
 		private OutputTemplate _defaultWaybillTemplate;
 		private OutputTemplate _defaultReportTemplate;
+
+		private string _oldDbDirectory;
 
 		#region Propertys
 
@@ -82,6 +87,9 @@ namespace WaybillsManager.Model
 				if (e.Action == NotifyCollectionChangedAction.Remove && DefaultWaybillTemplate != null && !WaybillTemplates.Contains(DefaultWaybillTemplate))
 					DefaultWaybillTemplate = null;
 			};
+
+			// фиксация последней сохраненной директории БД
+			_oldDbDirectory = _settings.DbDirectory;
 		}
 
 		public static SettingsStorage GetStorage()
@@ -107,6 +115,13 @@ namespace WaybillsManager.Model
 			_settings.WaybillTemplates.AddRange(WaybillTemplates.Select(t => t.URL).ToArray());
 
 			_settings.Save();
+
+			if (_oldDbDirectory!=_settings.DbDirectory)
+			{
+				string path = Assembly.GetExecutingAssembly().Location.Replace(".dll", ".exe");
+				System.Diagnostics.Process.Start(path);
+				Application.Current.Shutdown();
+			}
 		}
 
 		public async Task SaveAsync()

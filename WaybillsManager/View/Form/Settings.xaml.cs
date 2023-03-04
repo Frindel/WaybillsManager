@@ -5,7 +5,7 @@ using WaybillsManager.ViewModel;
 using System;
 using System.Collections.Specialized;
 
-namespace WaybillsManager.View
+namespace WaybillsManager.View.Form
 {
 	public partial class Settings : FormBase
 	{
